@@ -1,0 +1,7 @@
+[BnB]
+urls = ['https://connect.bbtheatres.com/WSVistaWebClient/OData.svc']
+prefix = 'BNBPEACH'
+chain_id = 426
+filter_houses = ''
+search_on = 'chain'
+method = 'vista'

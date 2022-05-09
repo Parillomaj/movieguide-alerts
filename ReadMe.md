@@ -17,6 +17,9 @@ added:
     search_on = 'str'
     method = 'str'
 
+The exhibitor name (dictionary key) should always be set to the codes
+source in Foxpro.
+
 if there is no chain_id for the location (unlikely) it should be set
 to **0**; *a chain_id as int is a required parameter, so do not
 leave blank*.

@@ -41,6 +41,12 @@ class MovieguideAlerts:
                                  position=0):
                     ex_codes.append(each[12][0][1])
 
+                query = """select * from Cinema..codes
+                            where source = %s 
+                            and """ % exhib
+                for each in self.cursor.execute(query).fetchall():
+                    pass
+
         elif self.toml_dict[exhib]['method'] == 'rts':
             for url in self.toml_dict[exhib]['urls']:
                 r = requests.get(url)

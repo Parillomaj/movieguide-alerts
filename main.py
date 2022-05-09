@@ -37,15 +37,9 @@ class MovieguideAlerts:
                 r = requests.get(f'{url}/Films')
                 tree = et.fromstring(r.text)
 
-                for each in tqdm(tree.findall('{http://www.w3.org/2005/Atom}entry'), colour='blue', total=100,
+                for code in tqdm(tree.findall('{http://www.w3.org/2005/Atom}entry'), colour='blue', total=100,
                                  position=0):
-                    ex_codes.append(each[12][0][1])
-
-                query = """select * from Cinema..codes
-                            where source = %s 
-                            and """ % exhib
-                for each in self.cursor.execute(query).fetchall():
-                    pass
+                    ex_codes.append(code[12][0][1])
 
         elif self.toml_dict[exhib]['method'] == 'rts':
             for url in self.toml_dict[exhib]['urls']:
@@ -62,7 +56,11 @@ class MovieguideAlerts:
             exit(1)
 
         # retrieve internal codes
-
+        query = """select * from Cinema..codes
+                   where source = '%s'
+                """ % exhib
+        for code in self.cursor.execute(query).fetchall():
+            in_codes.append([code[2], code[3]])
 
         # compare to see if any codes are missing; if yes, send an email; if no, pass
 

@@ -5,7 +5,7 @@ import inquirer
 import requests
 import sys
 import time
-import xml.etree.ElementTree as et
+import xml.etree.ElementTree as Et
 from tqdm import tqdm
 import smtplib
 from email.mime.text import MIMEText
@@ -45,7 +45,7 @@ class MovieguideAlerts:
                     r = requests.get(f'{url}/ScheduledFilms', params=payload)
                 else:
                     r = requests.get(f'{url}/ScheduledFilms')
-                tree = et.fromstring(r.text)
+                tree = Et.fromstring(r.text)
 
                 for code in tqdm(tree.findall('{http://www.w3.org/2005/Atom}entry'), colour='blue', total=100,
                                  position=0, leave=True):

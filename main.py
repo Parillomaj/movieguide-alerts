@@ -40,7 +40,11 @@ class MovieguideAlerts:
         # retrieve external codes
         if self.toml_dict[exhib]['method'] == 'vista':
             for url in self.toml_dict[exhib]['urls']:
-                r = requests.get(f'{url}/ScheduledFilms')
+                if len(url.split(',')) > 1:
+                    payload = {'connectapitoken': url.split(',')[1]}
+                    r = requests.get(f'{url}/ScheduledFilms', params=payload)
+                else:
+                    r = requests.get(f'{url}/ScheduledFilms')
                 tree = et.fromstring(r.text)
 
                 for code in tqdm(tree.findall('{http://www.w3.org/2005/Atom}entry'), colour='blue', total=100,
@@ -81,11 +85,17 @@ class MovieguideAlerts:
         ex_codes.sort()
         in_codes.sort(key=lambda x: x[0])
 
-        self.unmatched = [x for x in ex_codes if all(y[0] not in x for y in in_codes)]
+        compare = [x for x in ex_codes if all(y[0] not in x for y in in_codes)]
 
-        for i, i_code in enumerate(self.unmatched):
+        for i, i_code in enumerate(compare):
             if i_code[0] in ignore_codes:
-                self.unmatched.pop(i)
+                compare[i].append('ignore')
+
+        for i_code in compare:
+            if 'ignore' in i_code:
+                pass
+            else:
+                self.unmatched.append(i_code)
 
         with open(f'{exhib}-Movies.txt', 'w+', encoding='utf-8') as out_file:
             for _code in self.unmatched:

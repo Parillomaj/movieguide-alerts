@@ -26,24 +26,27 @@ class MovieguideAlerts:
                                     "UID=readonly;"
                                     "PWD=readonly;")
         self.cursor = connection.cursor()
+
         with open(f'{os.getcwd()}\\Sources.txt', 'w+', encoding='utf-8') as sources_file:
-            for dict in self.toml_dict.keys():
-                sources_file.write(dict)
+            for _dict in self.toml_dict.keys():
+                sources_file.write(_dict)
         sources_file.close()
 
     def check_data(self, exhib):
         ex_codes = []
         in_codes = []
+        ignore_codes = []
 
         # retrieve external codes
         if self.toml_dict[exhib]['method'] == 'vista':
             for url in self.toml_dict[exhib]['urls']:
-                r = requests.get(f'{url}/Films')
+                r = requests.get(f'{url}/ScheduledFilms')
                 tree = et.fromstring(r.text)
 
                 for code in tqdm(tree.findall('{http://www.w3.org/2005/Atom}entry'), colour='blue', total=100,
-                                 position=0):
-                    ex_codes.append([code[7][0][0].text, code[7][0][3]])
+                                 position=0, leave=True):
+                    if [code[12][0][1].text, code[12][0][4].text] not in ex_codes:
+                        ex_codes.append([code[12][0][1].text, code[12][0][4].text])
 
         elif self.toml_dict[exhib]['method'] == 'rts':
             for url in self.toml_dict[exhib]['urls']:
@@ -64,23 +67,29 @@ class MovieguideAlerts:
                    where source = '%s'
                 """ % exhib
         for code in self.cursor.execute(query).fetchall():
-            in_codes.append([code[2], code[3]])
+            if code[3] is None:
+                in_codes.append([code[2], 'None'])
+            else:
+                in_codes.append([code[2], code[3]])
+        ignore_query = """select code from Cinema..ignore 
+                          where source = '%s'
+                       """ % exhib
+        for code in self.cursor.execute(ignore_query).fetchall():
+            ignore_codes.append(code[0])
 
         # compare to see if any codes are missing; if yes, send an email; if no, pass
         ex_codes.sort()
         in_codes.sort(key=lambda x: x[0])
 
-        for out_code in ex_codes:
-            if out_code in in_codes:
-                pass
-            else:
-                self.unmatched.append(out_code)
+        self.unmatched = [x for x in ex_codes if all(y[0] not in x for y in in_codes)]
+
+        for i, i_code in enumerate(self.unmatched):
+            if i_code[0] in ignore_codes:
+                self.unmatched.pop(i)
 
         with open(f'{exhib}-Movies.txt', 'w+', encoding='utf-8') as out_file:
             for _code in self.unmatched:
-                for out_code in ex_codes:
-                    if _code == out_code[0]:
-                        out_file.write(f'{out_code[0]}\t{out_code[1]}')
+                out_file.write(f'{_code[0]}\t{_code[1]}\n')
         out_file.close()
 
     def send_message(self, exhib):
@@ -120,8 +129,8 @@ if __name__ == '__main__':
     except IndexError:
         choices = []
         with open(f'{os.getcwd()}\\Sources.txt', 'r', encoding='utf-8') as _file:
-            for line in _file:
-                choices.append(line.strip())
+            for _line in _file:
+                choices.append(_line.strip())
         _file.close()
         choices.sort()
         questions = [inquirer.Checkbox('imports', message='check which import?', choices=choices)]

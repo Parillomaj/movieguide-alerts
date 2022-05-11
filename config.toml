@@ -5,3 +5,11 @@ chain_id = 426
 filter_houses = ''
 search_on = 'chain'
 method = 'vista'
+
+[LOOKVISTA]
+urls = ['https://connect.lookcinemas.com/wsvistawebclient/OData.svc,53b18b79f50b46d6a3c0465e247f50ea']
+prefix = 'LOOK'
+chain_id = 1331
+filter_houses = ''
+search_on = 'chain'
+method = 'vista'

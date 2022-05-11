@@ -11,6 +11,9 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email.mime.application import MIMEApplication
+import datetime
+import pandas as pd
+import seaborn as sns
 
 
 class MovieguideAlerts:
@@ -35,7 +38,6 @@ class MovieguideAlerts:
     def check_data(self, exhib):
         ex_codes = []
         in_codes = []
-        ignore_codes = []
 
         # retrieve external codes
         if self.toml_dict[exhib]['method'] == 'vista':
@@ -75,43 +77,56 @@ class MovieguideAlerts:
                 in_codes.append([code[2], 'None'])
             else:
                 in_codes.append([code[2], code[3]])
+
         ignore_query = """select code from Cinema..ignore 
                           where source = '%s'
                        """ % exhib
         for code in self.cursor.execute(ignore_query).fetchall():
-            ignore_codes.append(code[0])
+            in_codes.append([code[0], 'None'])
 
         # compare to see if any codes are missing; if yes, send an email; if no, pass
-        ex_codes.sort()
+        ex_codes.sort(key=lambda x: x[0])
         in_codes.sort(key=lambda x: x[0])
 
-        compare = [x for x in ex_codes if all(y[0] not in x for y in in_codes)]
-
-        for i, i_code in enumerate(compare):
-            if i_code[0] in ignore_codes:
-                compare[i].append('ignore')
-
-        for i_code in compare:
-            if 'ignore' in i_code:
-                pass
-            else:
-                self.unmatched.append(i_code)
+        self.unmatched = [x for x in ex_codes if all(y[0] not in x for y in in_codes)]
 
         with open(f'{exhib}-Movies.txt', 'w+', encoding='utf-8') as out_file:
             for _code in self.unmatched:
                 out_file.write(f'{_code[0]}\t{_code[1]}\n')
         out_file.close()
 
+    def stats(self, exhib):
+        today = datetime.datetime.today().strftime('%Y%m%d-%H:%M')
+        with open(f'{os.getcwd()}\\stats\\activity.dat', 'w+', encoding='utf-8') as stats_file:
+            if len(self.unmatched) > 0:
+                stats_file.write(f'{exhib}-{today}\n')
+            else:
+                stats_file.write(f'{exhib}-None\n')
+
+    @staticmethod
+    def analyze():
+        data = []
+        with open(f'{os.getcwd()}\\stats\\activity.dat', 'r', encoding='utf-8') as activity_file:
+            for line in activity_file:
+                _date = datetime.datetime.strptime(line.split('-')[0], '%Y%m%d').strftime('%m-%d-%Y')
+                _time = line.split('-')[1]
+                exhib = line.split('-')[2]
+                data.append([_date, _time, exhib])
+        df = pd.DataFrame(data, columns=['Date', 'Time', 'Exhib'])
+        plot = sns.jointplot(data=df, x='Time', y='Exhib', kind='hex')
+        plot.savefig(f'{os.getcwd()}\\stats\\time-plot.png')
+
+
     def send_message(self, exhib):
         if len(self.unmatched) > 0:
             _from = 'matt.parillo@webedia-group.com'
-            to = 'matt.parillo@boxoffice.com'
+            to = 'matt.parillo@boxoffice.com,edm@boxoffice.com'
             msg = MIMEMultipart()
 
             msg['Subject'] = 'ACTION REQUIRED: Missing Movieguide Mappings'
             msg['From'] = _from
             msg['To'] = to
-            msg.attach(MIMEText('Missing %s Code(s) from %s; possible mapping needed. File attached.\n\n' %
+            msg.attach(MIMEText('Missing %s Code(s) from %s; possible mapping / stw needed. File attached.\n\n' %
                                 (str(len(self.unmatched)), exhib)))
             with open(f'{os.getcwd()}\\{exhib}-Movies.txt') as fil:
                 part = MIMEApplication(fil.read())
@@ -150,3 +165,15 @@ if __name__ == '__main__':
     for each in _exhib:
         app.check_data(each)
         app.send_message(each)
+
+    try:
+        _stats = sys.argv[2]
+        if _stats.upper() == 'TRUE':
+            app.stats(_exhib)
+    except IndexError:
+        choices = ['Yes', 'No']
+        question = [inquirer.List('stats', message='run stats analysis?', choices=choices)]
+        answer = inquirer.prompt(question)['stats']
+        if answer == 'Yes':
+            app.stats(_exhib)
+            app.analyze()

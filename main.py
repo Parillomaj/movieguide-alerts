@@ -113,8 +113,8 @@ class MovieguideAlerts:
                 data.append([_date, _time, exhib, num_codes])
 
         df = pd.DataFrame(data, columns=['Date', 'Time', 'Exhib', 'NumCodes'])
-        #plot = sns.jointplot(data=df, x='Exhib', y='Time', kind='hex')
-        #plot.savefig(f'{os.getcwd()}\\stats\\time-plot.png')
+        plot = sns.jointplot(data=df, x='Date', y='NumCodes', hue='Exhib')
+        plot.savefig(f'{os.getcwd()}\\stats\\time-plot.png')
         activity_file.close()
 
     def send_message(self, exhib):

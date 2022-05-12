@@ -97,25 +97,25 @@ class MovieguideAlerts:
 
     def stats(self, exhib):
         today = datetime.datetime.today().strftime('%Y%m%d-%H:%M')
-        with open(f'{os.getcwd()}\\stats\\activity.dat', 'w+', encoding='utf-8') as stats_file:
-            if len(self.unmatched) > 0:
-                stats_file.write(f'{exhib}-{today}\n')
-            else:
-                stats_file.write(f'{exhib}-None\n')
+        with open(f'{os.getcwd()}\\stats\\activity.dat', 'a', encoding='utf-8') as stats_file:
+            stats_file.write(f'{exhib}-{today}-{len(self.unmatched)}\n')
+        stats_file.close()
 
     @staticmethod
     def analyze():
         data = []
         with open(f'{os.getcwd()}\\stats\\activity.dat', 'r', encoding='utf-8') as activity_file:
             for line in activity_file:
-                _date = datetime.datetime.strptime(line.split('-')[0], '%Y%m%d').strftime('%m-%d-%Y')
-                _time = line.split('-')[1]
-                exhib = line.split('-')[2]
-                data.append([_date, _time, exhib])
-        df = pd.DataFrame(data, columns=['Date', 'Time', 'Exhib'])
-        plot = sns.jointplot(data=df, x='Time', y='Exhib', kind='hex')
-        plot.savefig(f'{os.getcwd()}\\stats\\time-plot.png')
+                _date = datetime.datetime.strptime(line.split('-')[1], '%Y%m%d')
+                _time = line.split('-')[2]
+                exhib = line.split('-')[0]
+                num_codes = int(line.split('-')[3])
+                data.append([_date, _time, exhib, num_codes])
 
+        df = pd.DataFrame(data, columns=['Date', 'Time', 'Exhib', 'NumCodes'])
+        #plot = sns.jointplot(data=df, x='Exhib', y='Time', kind='hex')
+        #plot.savefig(f'{os.getcwd()}\\stats\\time-plot.png')
+        activity_file.close()
 
     def send_message(self, exhib):
         if len(self.unmatched) > 0:
@@ -166,14 +166,15 @@ if __name__ == '__main__':
         app.check_data(each)
         app.send_message(each)
 
-    try:
-        _stats = sys.argv[2]
-        if _stats.upper() == 'TRUE':
-            app.stats(_exhib)
-    except IndexError:
-        choices = ['Yes', 'No']
-        question = [inquirer.List('stats', message='run stats analysis?', choices=choices)]
-        answer = inquirer.prompt(question)['stats']
-        if answer == 'Yes':
-            app.stats(_exhib)
-            app.analyze()
+        try:
+            _stats = sys.argv[2]
+            if _stats.upper() == 'TRUE':
+                app.stats(each)
+                app.analyze()
+        except IndexError:
+            choices = ['Yes', 'No']
+            question = [inquirer.List('stats', message='run stats analysis?', choices=choices)]
+            answer = inquirer.prompt(question)['stats']
+            if answer == 'Yes':
+                app.stats(each)
+                app.analyze()

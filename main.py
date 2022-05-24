@@ -51,8 +51,12 @@ class MovieguideAlerts:
 
                 for code in tqdm(tree.findall('{http://www.w3.org/2005/Atom}entry'), colour='blue', total=100,
                                  position=0, leave=True):
-                    if [code[12][0][1].text, code[12][0][4].text] not in ex_codes:
-                        ex_codes.append([code[12][0][1].text, code[12][0][4].text])
+                    try:
+                        if [code[12][0][1].text, code[12][0][4].text] not in ex_codes:
+                            ex_codes.append([code[12][0][1].text, code[12][0][4].text])
+                    except IndexError:
+                        if [code[11][0][1].text, code[11][0][4].text] not in ex_codes:
+                            ex_codes.append([code[11][0][1].text, code[11][0][4].text])
 
         elif self.toml_dict[exhib]['method'] == 'rts':
             for url in self.toml_dict[exhib]['urls']:

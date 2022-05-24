@@ -32,7 +32,7 @@ class MovieguideAlerts:
 
         with open(f'{os.getcwd()}\\Sources.txt', 'w+', encoding='utf-8') as sources_file:
             for _dict in self.toml_dict.keys():
-                sources_file.write(_dict)
+                sources_file.write(f'{_dict}\n')
         sources_file.close()
 
     def check_data(self, exhib):
@@ -110,7 +110,7 @@ class MovieguideAlerts:
 
         self.unmatched = [x for x in ex_codes if all(y[0] not in x for y in in_codes)]
 
-        with open(f'{exhib}-Movies.txt', 'w+', encoding='utf-8') as out_file:
+        with open(f'{os.getcwd()}\\Files\\{exhib}-Movies.txt', 'w+', encoding='utf-8') as out_file:
             for _code in self.unmatched:
                 out_file.write(f'{_code[0]}\t{_code[1]}\n')
         out_file.close()
@@ -132,18 +132,20 @@ class MovieguideAlerts:
                 num_codes = int(line.split('-')[3])
                 data.append([_date, _time, exhib, num_codes])
 
-        df = pd.DataFrame(data, columns=['Date', 'Time', 'Exhib', 'NumCodes']).sort_values('Date')
-        x_form = df['Date'].dt.strftime('%A %m-%d').unique()
+        df = pd.DataFrame(data, columns=['Date', 'Time', 'Exhib', 'NumCodes']).groupby(['Exhib', 'Date']).sum()
         plot = sns.lineplot(data=df, x='Date', y='NumCodes', hue='Exhib')
+        x_form = []
+        for label in plot.get_xticklabels():
+            x_form.append(datetime.datetime.strptime(label.get_text(), '%Y-%m-%d').strftime('%A %m-%d'))
         plot.set_xticklabels(labels=x_form, rotation=30)
         plot.figure.tight_layout()
-        plot.savefig(f'{os.getcwd()}\\stats\\time-plot.png')
+        plot.figure.savefig(f'{os.getcwd()}\\stats\\time-plot.png')
         activity_file.close()
 
     def send_message(self, exhib):
         if len(self.unmatched) > 0:
-            _from = 'matt.parillo@webedia-group.com'
-            to = 'matt.parillo@boxoffice.com,edm@boxoffice.com'
+            _from = 'matt.parillo@webedia-group.com, edm@boxoffice.com'
+            to = 'matt.parillo@boxoffice.com'
             msg = MIMEMultipart()
 
             msg['Subject'] = 'ACTION REQUIRED: Missing Movieguide Mappings'
@@ -151,7 +153,7 @@ class MovieguideAlerts:
             msg['To'] = to
             msg.attach(MIMEText('Missing %s Code(s) from %s; possible mapping / stw needed. File attached.\n\n' %
                                 (str(len(self.unmatched)), exhib)))
-            with open(f'{os.getcwd()}\\{exhib}-Movies.txt') as fil:
+            with open(f'{os.getcwd()}\\Files\\{exhib}-Movies.txt') as fil:
                 part = MIMEApplication(fil.read())
                 part['Content-Disposition'] = 'attachment; filename="%s"' % f'{exhib}-Movies.txt'
                 msg.attach(part)

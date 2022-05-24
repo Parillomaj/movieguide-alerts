@@ -44,7 +44,7 @@ class MovieguideAlerts:
             for url in self.toml_dict[exhib]['urls']:
                 if len(url.split(',')) > 1:
                     payload = {'connectapitoken': url.split(',')[1]}
-                    r = requests.get(f'{url}/ScheduledFilms', params=payload)
+                    r = requests.get(f'{url.split(",")[0]}/ScheduledFilms', params=payload)
                 else:
                     r = requests.get(f'{url}/ScheduledFilms')
                 tree = Et.fromstring(r.text)
@@ -112,8 +112,10 @@ class MovieguideAlerts:
                 num_codes = int(line.split('-')[3])
                 data.append([_date, _time, exhib, num_codes])
 
-        df = pd.DataFrame(data, columns=['Date', 'Time', 'Exhib', 'NumCodes'])
+        df = pd.DataFrame(data, columns=['Date', 'Time', 'Exhib', 'NumCodes']).sort_values('Date')
+        x_form = df['Date'].dt.strftime('%A %m-%d').unique()
         plot = sns.jointplot(data=df, x='Date', y='NumCodes', hue='Exhib')
+        plot.ax_joint.set_xticklabels(labels=x_form, rotation=45)
         plot.savefig(f'{os.getcwd()}\\stats\\time-plot.png')
         activity_file.close()
 

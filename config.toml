@@ -13,3 +13,11 @@ chain_id = 1331
 filter_houses = ''
 search_on = 'chain'
 method = 'vista'
+
+[LANDMARKVISTA]
+urls = ['http://198.35.56.190/WSVistaWEbclient/OData.svc']
+prefix = 'LANDMARKUS'
+chain_id = 212
+filter_houses = ''
+search_on = 'chain'
+method = 'vista'

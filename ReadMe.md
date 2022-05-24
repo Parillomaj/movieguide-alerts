@@ -28,19 +28,31 @@ filter_houses should be passed in as a comma separated list of
 strings, **not** an array.  These houses will be skipped.
 
 search_on needs to be specific strings; the program will accept:
-- chain -- the chain_id will be used 
-- alt -- the prefix will be used 
-- name -- the exhibitor_name will be used
+- `chain` -- the chain_id will be used 
+- `alt` -- the prefix will be used 
+- `name` -- the exhibitor_name will be used
 
 This parameter determines how the program will search theater-based
 data within our API.  The program will default to "chain"
 
 method is also a specific list of strings; the program will accept:
-- vista -- the query pattern will assume a vista endpoint
-- rts -- the query pattern will assume an rts endpoint
-- omniterm -- the query pattern will assume an omniterm endpoint
-- veezi -- the query pattern will assume a veezi endpoint
+- `vista` -- the query pattern will assume a vista endpoint
+- `rts` -- the query pattern will assume an rts endpoint
+- `omniterm` -- the query pattern will assume an omniterm endpoint
+- `veezi` -- the query pattern will assume a veezi endpoint
 
 ### Execution
 The program has a built-in multi-select CLI which allows the user to run
-the script manually at any time.
+the script manually at any time. The script can also be executed by passing
+the required arguments into the CMD prompt:
+    
+    python main.py [arg1] [arg2]
+
+- **arg1**: The source(s) to be checked, as a comma delimited list. Source
+    names should be an exact match to their corresponding toml entry.
+- **arg2**: Should be `TRUE` or `FALSE`, indicating whether the 
+    analysis should be run along with the program.
+
+Currently, the program is executed primarily via multiple .bat files scheduled
+via Windows Task Scheduler.  The root directory can be found here:
+`S:\\Mtxcrawler\\Gathertimes\\MovieguideAlerts\\Control\\`

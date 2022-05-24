@@ -57,6 +57,22 @@ class MovieguideAlerts:
         elif self.toml_dict[exhib]['method'] == 'rts':
             for url in self.toml_dict[exhib]['urls']:
                 r = requests.get(url)
+                tree = Et.fromstring(r.text)
+
+                run_bool = False
+                while run_bool is False:
+                    if r.status_code == 404 and 'too many' in r.text.lower():
+                        for i in range(300, 0, -1):
+                            sys.stdout.write(f'\rTrying again in {str(i)} .')
+                            sys.stdout.flush()
+                            time.sleep(1)
+                    else:
+                        run_bool = True
+
+                for code in tqdm(tree.findall('filmtitle'), colour='blue', total=100, position=0, leave=True):
+                    if [code[10].text, code[0].text] not in ex_codes:
+                        ex_codes.append([code[10].text, code[0].text])
+
         elif self.toml_dict[exhib]['method'] == 'omniterm':
             for url in self.toml_dict[exhib]['urls']:
                 r = requests.get(url)
@@ -114,8 +130,9 @@ class MovieguideAlerts:
 
         df = pd.DataFrame(data, columns=['Date', 'Time', 'Exhib', 'NumCodes']).sort_values('Date')
         x_form = df['Date'].dt.strftime('%A %m-%d').unique()
-        plot = sns.jointplot(data=df, x='Date', y='NumCodes', hue='Exhib')
-        plot.ax_joint.set_xticklabels(labels=x_form, rotation=45)
+        plot = sns.lineplot(data=df, x='Date', y='NumCodes', hue='Exhib')
+        plot.set_xticklabels(labels=x_form, rotation=30)
+        plot.figure.tight_layout()
         plot.savefig(f'{os.getcwd()}\\stats\\time-plot.png')
         activity_file.close()
 

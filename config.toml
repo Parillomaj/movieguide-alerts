@@ -21,3 +21,37 @@ chain_id = 212
 filter_houses = ''
 search_on = 'chain'
 method = 'vista'
+
+[GOODRICHRTS]
+urls = ['https://625520.formovietickets.com:2235/showtimes.xml',
+        'https://418379.formovietickets.com:2235/showtimes.xml',
+        'https://147783.formovietickets.com:2235/showtimes.xml',
+        'https://286229.formovietickets.com:2235/showtimes.xml',
+        'https://303419.formovietickets.com:2235/showtimes.xml',
+        'https://316506.formovietickets.com:2235/showtimes.xml',
+        'https://354283.formovietickets.com:2235/showtimes.xml',
+        'https://359021.formovietickets.com:2235/showtimes.xml',
+        'https://418379.formovietickets.com:2235/showtimes.xml',
+        'https://558439.formovietickets.com:2235/showtimes.xml',
+        'https://559503.formovietickets.com:2235/showtimes.xml',
+        'https://625520.formovietickets.com:2235/showtimes.xml',
+        'https://646644.formovietickets.com:2235/showtimes.xml',
+        'https://661141.formovietickets.com:2235/showtimes.xml',
+        'https://665046.formovietickets.com:2235/showtimes.xml',
+        'https://737043.formovietickets.com:2235/showtimes.xml',
+        'https://789597.formovietickets.com:2235/showtimes.xml',
+        'https://794441.formovietickets.com:2235/showtimes.xml',
+        'https://815376.formovietickets.com:2235/showtimes.xml',
+        'https://851006.formovietickets.com:2235/showtimes.xml',
+        'https://911039.formovietickets.com:2235/showtimes.xml',
+        'https://945865.formovietickets.com:2235/showtimes.xml',
+        'https://970420.formovietickets.com:2235/showtimes.xml',
+        'https://199803.formovietickets.com:2235/showtimes.xml',
+        'https://837818.formovietickets.com:2235/showtimes.xml',
+        'https://747473.formovietickets.com:2235/showtimes.xml',
+        'https://151668.formovietickets.com:2235/showtimes.xml']
+prefix = 'GOODRICH'
+chain_id = 115
+filter_houses = ''
+search_on = 'chain'
+method = 'rts'

@@ -14,6 +14,7 @@ from email.mime.application import MIMEApplication
 import datetime
 import pandas as pd
 import seaborn as sns
+import matplotlib.pyplot as plt
 
 
 class MovieguideAlerts:
@@ -134,18 +135,17 @@ class MovieguideAlerts:
 
         df = pd.DataFrame(data, columns=['Date', 'Time', 'Exhib', 'NumCodes']).groupby(['Exhib', 'Date']).sum()
         plot = sns.lineplot(data=df, x='Date', y='NumCodes', hue='Exhib')
-        x_form = []
-        for label in plot.get_xticklabels():
-            x_form.append(datetime.datetime.strptime(label.get_text(), '%Y-%m-%d').strftime('%A %m-%d'))
-        plot.set_xticklabels(labels=x_form, rotation=30)
+        plot.figure.canvas.draw()
+        plot.set_xticklabels(labels=plot.get_xticklabels(), rotation=30)
         plot.figure.tight_layout()
         plot.figure.savefig(f'{os.getcwd()}\\stats\\time-plot.png')
+        plt.close(plot.figure)
         activity_file.close()
 
     def send_message(self, exhib):
         if len(self.unmatched) > 0:
-            _from = 'matt.parillo@webedia-group.com, edm@boxoffice.com'
-            to = 'matt.parillo@boxoffice.com'
+            _from = 'matt.parillo@webedia-group.com'
+            to = 'matt.parillo@boxoffice.com,edm@boxoffice.com'
             msg = MIMEMultipart()
 
             msg['Subject'] = 'ACTION REQUIRED: Missing Movieguide Mappings'

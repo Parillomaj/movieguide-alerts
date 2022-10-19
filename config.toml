@@ -1,5 +1,5 @@
 [BNBVISTA]
-urls = ['https://connect.bbtheatres.com/WSVistaWebClient/OData.svc']
+urls = ['https://connect.bbtheatres.com/WSVistaWebClient/OData.svc,3328be29639e4576995af178ba49bc9a']
 prefix = 'BNBPEACH'
 chain_id = 426
 filter_houses = ''
@@ -55,3 +55,113 @@ chain_id = 115
 filter_houses = ''
 search_on = 'chain'
 method = 'rts'
+
+[DANBARRYRTS]
+urls = ['https://825758.formovietickets.com:2235/showtimes.xml',
+        'https://73182.formovietickets.com:2235/showtimes.xml',
+        'https://59849.formovietickets.com:2235/showtimes.xml']
+prefix = 'DANBARRY'
+chain_id = 74
+filter_houses = ''
+search_on = 'chain'
+method = 'rts'
+
+[3BELOWRTS]
+urls = ['https://505104.formovietickets.com:2235/showtimes.xml']
+prefix = '3BELOW'
+chain_id = 2495
+filter_houses = ''
+search_on = 'chain'
+method = 'rts'
+
+[ELVISRTS]
+urls = ['https://84222.formovietickets.com:2235/showtimes.xml']
+prefix = 'ELVIS'
+chain_id = 661
+filter_houses = '2939,782'
+search_on = 'chain'
+method = 'rts'
+
+[ACXVISTA]
+urls = ['https://ticketing.acxcinemas.com/WSVistaWebClient/OData.svc,018a3070fce54bea83a8dca8552f2cd2']
+prefix = 'ACX'
+chain_id = 79
+filter_houses = '8557,2313,9187,8709'
+search_on = 'chain'
+method = 'vista'
+
+[CPLUSAVISTA]
+urls = ['https://ng-connec.cinepolisusa.com/WSVistaWebClient/OData.svc,QdfnlOzy9SSQsjrQKqBxkQVKWTf9cPR7']
+prefix = 'CINEPOLISPEACH'
+chain_id = 1199
+filter_houses = ''
+search_on = 'chain'
+method = 'vista'
+
+[CLOVERRTS]
+urls = ['https://73508.formovietickets.com:2235/showtimes.xml']
+prefix = 'CLOVER'
+chain_id = 1381
+filter_houses = ''
+search_on = 'chain'
+method = 'rts'
+
+[PCCRTS]
+urls = ['http://15655.formovietickets.com:2235/showtimes.xml','http://225.formovietickets.com:2235/showtimes.xml',
+        'http://49.formovietickets.com:2235/showtimes.xml', 'http://66.formovietickets.com:2235/showtimes.xml',
+        'http://77739.formovietickets.com:2235/showtimes.xml','http://52.formovietickets.com:2235/showtimes.xml',
+        'http://24.formovietickets.com:2235/showtimes.xml', 'http://25.formovietickets.com:2235/showtimes.xml',
+        'http://17872.formovietickets.com:2235/showtimes.xml','http://133.formovietickets.com:2235/showtimes.xml',
+        'http://68.formovietickets.com:2235/showtimes.xml','http://82964.formovietickets.com:2235/showtimes.xml',
+        'http://58098.formovietickets.com:2235/showtimes.xml','http://22759.formovietickets.com:2235/showtimes.xml',
+        'http://26992.formovietickets.com:2235/showtimes.xml','http://7636.formovietickets.com:2235/showtimes.xml',
+        'http://41395.formovietickets.com:2235/showtimes.xml','http://82390.formovietickets.com:2235/showtimes.xml',
+        'http://29588.formovietickets.com:2235/showtimes.xml','http://23901.formovietickets.com:2235/showtimes.xml',
+        'http://55340.formovietickets.com:2235/showtimes.xml','http://515794.formovietickets.com:2235/showtimes.xml',
+        'http://794359.formovietickets.com:2235/showtimes.xml','http://813740.formovietickets.com:2235/showtimes.xml']
+prefix = 'PREMIERE'
+chain_id = 240
+filter_houses = ''
+search_on = 'chain'
+method = 'rts'
+
+[FLIXVISTA]
+urls = ['https://ticketing.flixbrewhouse.com/WSVistaWebClient/OData.svc,1ba27c53964c48a1b3d8957189df2b03']
+prefix = 'FLIX'
+chain_id = 1212
+filter_houses = ''
+search_on = 'chain'
+method = 'vista'
+
+[FRIDLEYVISTA]
+urls = ['https://vista.fridleytheatres.com/WSVistaWebClient/Odata.svc,7c54f8c94hhyt88oops989327dkfdmrnmleo']
+prefix = 'FRIDLEY'
+chain_id = 732
+filter_houses = ''
+search_on = 'chain'
+method = 'vista'
+
+[FRIDLEYRTS]
+urls = ['http://19542.formovietickets.com:2235/showtimes.xml', 'http://69237.formovietickets.com:2235/showtimes.xml',
+        'http://4249.formovietickets.com:2235/showtimes.xml', 'http://70903.formovietickets.com:2235/showtimes.xml',
+        'http://32031.formovietickets.com:2235/showtimes.xml', 'http://77515.formovietickets.com:2235/showtimes.xml',
+        'http://2322.formovietickets.com:2235/showtimes.xml', 'http://15484.formovietickets.com:2235/showtimes.xml',
+        'http://64362.formovietickets.com:2235/showtimes.xml', 'http://2335.formovietickets.com:2235/showtimes.xml',
+        'http://48102.formovietickets.com:2235/showtimes.xml', 'http://62867.formovietickets.com:2235/showtimes.xml',
+        'http://44659.formovietickets.com:2235/showtimes.xml', 'http://66843.formovietickets.com:2235/showtimes.xml',
+        'http://42398.formovietickets.com:2235/showtimes.xml', 'http://49158.formovietickets.com:2235/showtimes.xml',
+        'http://18955.formovietickets.com:2235/showtimes.xml',  'http://26613.formovietickets.com:2235/showtimes.xml',
+        'http://33387.formovietickets.com:2235/showtimes.xml', 'http://54171.formovietickets.com:2235/showtimes.xml']
+prefix = 'FRIDLEY'
+chain_id = 74
+filter_houses = ''
+search_on = 'chain'
+method = 'rts'
+
+[SHOWCASEVISTA]
+urls = ['https://mobile.showcasecinemas.com/wsvistawebclient/odata.svc,c214a24bb9a2440b93d95a5fc357a6a0']
+prefix = 'SHOWCASE'
+chain_id = 20
+filter_houses = ''
+search_on = 'chain'
+method = 'vista'

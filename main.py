@@ -5,6 +5,7 @@ import inquirer
 import requests
 import sys
 import time
+import xml
 import xml.etree.ElementTree as Et
 from tqdm import tqdm
 import smtplib
@@ -43,40 +44,53 @@ class MovieguideAlerts:
         # retrieve external codes
         if self.toml_dict[exhib]['method'] == 'vista':
             for url in self.toml_dict[exhib]['urls']:
-                if len(url.split(',')) > 1:
-                    payload = {'connectapitoken': url.split(',')[1]}
-                    r = requests.get(f'{url.split(",")[0]}/ScheduledFilms', params=payload)
-                else:
-                    r = requests.get(f'{url}/ScheduledFilms')
-                tree = Et.fromstring(r.text)
+                try:
+                    if len(url.split(',')) > 1:
+                        payload = {'connectapitoken': url.split(',')[1]}
+                        r = requests.get(f'{url.split(",")[0]}/ScheduledFilms', params=payload, timeout=None,
+                                         verify=False)
+                    else:
+                        r = requests.get(f'{url}/ScheduledFilms', timeout=None, verify=False)
+                    tree = Et.fromstring(r.text)
 
-                for code in tqdm(tree.findall('{http://www.w3.org/2005/Atom}entry'), colour='blue', total=100,
-                                 position=0, leave=True):
-                    try:
-                        if [code[12][0][1].text, code[12][0][4].text] not in ex_codes:
-                            ex_codes.append([code[12][0][1].text, code[12][0][4].text])
-                    except IndexError:
-                        if [code[11][0][1].text, code[11][0][4].text] not in ex_codes:
-                            ex_codes.append([code[11][0][1].text, code[11][0][4].text])
+                    for code in tqdm(tree.findall('{http://www.w3.org/2005/Atom}entry'), colour='blue',
+                                     position=0, leave=True):
+                        try:
+                            if [code[12][0][1].text, code[12][0][4].text] not in ex_codes:
+                                ex_codes.append([code[12][0][1].text, code[12][0][4].text])
+                        except IndexError:
+                            if [code[11][0][1].text, code[11][0][4].text] not in ex_codes:
+                                ex_codes.append([code[11][0][1].text, code[11][0][4].text])
+                except (requests.exceptions.RequestException, xml.etree.ElementTree.ParseError) as e:
+                    with open(f'{os.getcwd()}\\logs\\errors.txt', 'a+', encoding='utf-8') as error_file:
+                        error_file.write(f'{datetime.datetime.now()}\t{each}\t{type(e).__name__}\n')
 
         elif self.toml_dict[exhib]['method'] == 'rts':
             for url in self.toml_dict[exhib]['urls']:
-                r = requests.get(url)
-                tree = Et.fromstring(r.text)
-
                 run_bool = False
                 while run_bool is False:
+                    try:
+                        r = requests.get(url)
+                    except requests.exceptions.RequestException as e:
+                        with open(f'{os.getcwd()}\\logs\\errors.txt', 'a+', encoding='utf-8') as error_file:
+                            error_file.write(f'{datetime.datetime.now()}\t{each}\t{type(e).__name__}\n')
+                        run_bool = True
+                        continue
+
                     if r.status_code == 404 and 'too many' in r.text.lower():
                         for i in range(300, 0, -1):
                             sys.stdout.write(f'\rTrying again in {str(i)} .')
                             sys.stdout.flush()
                             time.sleep(1)
+                            run_bool = False
                     else:
+                        tree = Et.fromstring(r.text)
                         run_bool = True
 
-                for code in tqdm(tree.findall('filmtitle'), colour='blue', total=100, position=0, leave=True):
-                    if [code[10].text, code[0].text] not in ex_codes:
-                        ex_codes.append([code[10].text, code[0].text])
+                        for code in tqdm(tree.findall('filmtitle'), colour='blue', total=len(tree.findall('filmtitle')),
+                                         position=0, leave=True):
+                            if [code[10].text, code[0].text] not in ex_codes:
+                                ex_codes.append([code[10].text, code[0].text])
 
         elif self.toml_dict[exhib]['method'] == 'omniterm':
             for url in self.toml_dict[exhib]['urls']:
@@ -89,32 +103,35 @@ class MovieguideAlerts:
             time.sleep(3)
             exit(1)
 
-        # retrieve internal codes
-        query = """select * from Cinema..codes
-                   where source = '%s'
-                """ % exhib
-        for code in self.cursor.execute(query).fetchall():
-            if code[3] is None:
-                in_codes.append([code[2], 'None'])
-            else:
-                in_codes.append([code[2], code[3]])
+        if len(ex_codes) == 0:
+            pass
+        else:
+            # retrieve internal codes
+            query = """select * from Cinema..codes
+                       where source = '%s'
+                    """ % exhib
+            for code in self.cursor.execute(query).fetchall():
+                if code[3] is None:
+                    in_codes.append([code[2], 'None'])
+                else:
+                    in_codes.append([code[2], code[3]])
 
-        ignore_query = """select code from Cinema..ignore 
-                          where source = '%s'
-                       """ % exhib
-        for code in self.cursor.execute(ignore_query).fetchall():
-            in_codes.append([code[0], 'None'])
+            ignore_query = """select code from Cinema..ignore 
+                              where source = '%s'
+                           """ % exhib
+            for code in self.cursor.execute(ignore_query).fetchall():
+                in_codes.append([code[0], 'None'])
 
-        # compare to see if any codes are missing; if yes, send an email; if no, pass
-        ex_codes.sort(key=lambda x: x[0])
-        in_codes.sort(key=lambda x: x[0])
+            # compare to see if any codes are missing; if yes, send an email; if no, pass
+            ex_codes.sort(key=lambda x: x[0])
+            in_codes.sort(key=lambda x: x[0])
 
-        self.unmatched = [x for x in ex_codes if all(y[0] not in x for y in in_codes)]
+            self.unmatched = [x for x in ex_codes if all(y[0] not in x for y in in_codes)]
 
-        with open(f'{os.getcwd()}\\Files\\{exhib}-Movies.txt', 'w+', encoding='utf-8') as out_file:
-            for _code in self.unmatched:
-                out_file.write(f'{_code[0]}\t{_code[1]}\n')
-        out_file.close()
+            with open(f'{os.getcwd()}\\Files\\{exhib}-Movies.txt', 'w+', encoding='utf-8') as out_file:
+                for _code in self.unmatched:
+                    out_file.write(f'{_code[0]}\t{_code[1]}\n')
+            out_file.close()
 
     def stats(self, exhib):
         today = datetime.datetime.today().strftime('%Y%m%d-%H:%M')
@@ -187,10 +204,9 @@ if __name__ == '__main__':
         answers = inquirer.prompt(questions)
         _exhib = answers['imports']
 
-    for each in _exhib:
+    for each in tqdm(_exhib, leave=True, position=0, colour='Blue'):
         app.check_data(each)
         app.send_message(each)
-
         try:
             _stats = sys.argv[2]
             if _stats.upper() == 'TRUE':

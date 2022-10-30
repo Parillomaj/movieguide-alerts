@@ -165,3 +165,43 @@ chain_id = 20
 filter_houses = ''
 search_on = 'chain'
 method = 'vista'
+
+[PENNVISTA]
+urls = ['https://tickets.penncinema.com/WSVistaWebClient/OData.svc,f7747d6f8e564fc99c014289e73ede1c']
+prefix = 'PENNVISTA'
+chain_id = 863
+filter_houses = ''
+search_on = 'chain'
+method = 'vista'
+
+[CITYBASEVISTA]
+urls = ['https://webclient.citybasecinemas.com/WSVistaWebClient/OData.svc,c1aa7b38ae3a4cb8864a46d53663c4e9']
+prefix = 'CITYBASEVISTA'
+chain_id = [2468,1468]
+filter_houses = ''
+search_on = 'chain'
+method = 'vista'
+
+[CITYBASERTS]
+urls = ['http://20389.formovietickets.com:2235/showtimes.xml']
+prefix = 'CITYBASERTS'
+chain_id = [2468,1468]
+filter_houses = ''
+search_on = 'chain'
+method = 'rts'
+
+[NPHVISTA]
+urls = ['https://cinema.nphcinema.co.uk/WSVistaWebClient/Odata.svc,dkR6pYoUkZA35HvR']
+prefix = 'NPHVISTA'
+chain_id = 2301
+filter_houses = ''
+search_on = 'chain'
+method = 'vista'
+
+[CINEMASAVERRTS]
+urls = ['https://45649.formovietickets.com:2235/showtimes.xml']
+prefix = 'CINEMASAVER'
+chain_id = 727
+filter_houses = ''
+search_on = 'chain'
+method = 'rts'

@@ -37,7 +37,7 @@ class MovieguideAlerts:
                 sources_file.write(f'{_dict}\n')
         sources_file.close()
 
-    def check_data(self, exhib):
+    def check_data(self, exhib, send_all: bool):
         ex_codes = []
         in_codes = []
 
@@ -128,11 +128,14 @@ class MovieguideAlerts:
             in_codes.sort(key=lambda x: x[0])
 
             self.unmatched = [x for x in ex_codes if all(y[0] not in x for y in in_codes)]
-
-            with open(f'{os.getcwd()}\\Files\\{exhib}-Movies.txt', 'w+', encoding='utf-8') as out_file:
-                for _code in self.unmatched:
-                    out_file.write(f'{_code[0]}\t{_code[1]}\n')
-            out_file.close()
+            if send_all is False:
+                with open(f'{os.getcwd()}\\Files\\{exhib}-Movies.txt', 'w+', encoding='utf-8') as out_file:
+                    for _code in self.unmatched:
+                        out_file.write(f'{_code[0]}\t{_code[1]}\n')
+            else:
+                with open(f'{os.getcwd()}\\Files\\Movieguide-Movies.txt', 'a+', encoding='utf-8') as out_file:
+                    for _code in self.unmatched:
+                        out_file.write(f'{_code[0]}\t{_code[1]}\n')
 
     def stats(self, exhib):
         today = datetime.datetime.today().strftime('%Y%m%d-%H:%M')
@@ -160,18 +163,42 @@ class MovieguideAlerts:
         plt.close(plot.figure)
         activity_file.close()
 
-    def send_message(self, exhib):
-        if len(self.unmatched) > 0:
-            _from = 'matt.parillo@webedia-group.com'
-            to = 'matt.parillo@boxoffice.com'
-            msg = MIMEMultipart()
+    def send_message(self, exhib, send_all: bool):
+        _from = 'matt.parillo@webedia-group.com'
+        to = 'matt.parillo@boxoffice.com'
+        if send_all is False:
+            if len(self.unmatched) > 0:
+                msg = MIMEMultipart()
+                msg['Subject'] = 'ACTION REQUIRED: Missing Movieguide Mappings'
+                msg['From'] = _from
+                msg['To'] = to
+                msg.attach(MIMEText('Missing %s Code(s) from %s; possible mapping / stw needed. File attached.\n\n' %
+                                    (str(len(self.unmatched)), exhib)))
+                with open(f'{os.getcwd()}\\Files\\{exhib}-Movies.txt') as fil:
+                    part = MIMEApplication(fil.read())
+                    part['Content-Disposition'] = 'attachment; filename="%s"' % f'{exhib}-Movies.txt'
+                    msg.attach(part)
+                    fil.seek(0)
+                    for line in fil:
+                        msg.attach(MIMEText(f'{line}'))
+                fil.close()
 
+                s = smtplib.SMTP('smtp.gmail.com', 587)
+                s.starttls()
+                s.ehlo()
+                s.login('matt.parillo@webedia-group.com', 'ccgvmrhwltnbgqem')
+                s.sendmail(_from, to.split(','), msg.as_string())
+                s.quit()
+            else:
+                pass
+        else:
+            msg = MIMEMultipart()
             msg['Subject'] = 'ACTION REQUIRED: Missing Movieguide Mappings'
             msg['From'] = _from
             msg['To'] = to
-            msg.attach(MIMEText('Missing %s Code(s) from %s; possible mapping / stw needed. File attached.\n\n' %
-                                (str(len(self.unmatched)), exhib)))
-            with open(f'{os.getcwd()}\\Files\\{exhib}-Movies.txt') as fil:
+            msg.attach(MIMEText('Missing %s Code(s); possible mapping / stw needed. File attached.\n\n' %
+                                str(len(self.unmatched))))
+            with open(f'{os.getcwd()}\\Files\\Movieguide-Movies.txt') as fil:
                 part = MIMEApplication(fil.read())
                 part['Content-Disposition'] = 'attachment; filename="%s"' % f'{exhib}-Movies.txt'
                 msg.attach(part)
@@ -186,13 +213,13 @@ class MovieguideAlerts:
             s.login('matt.parillo@webedia-group.com', 'ccgvmrhwltnbgqem')
             s.sendmail(_from, to.split(','), msg.as_string())
             s.quit()
-        else:
-            pass
 
     def send_all(self, exhib, stats: bool):
         # collect data for multiple sources
-        for each in exhib:
-            self.check_data(each)
+        os.remove(f'{os.getcwd()}\\Files\\Movieguide-Movies.txt')
+        for each in exhib.split(','):
+            self.check_data(each, True)
+
             if stats is True:
                 self.stats(each)
                 self.analyze()
@@ -226,8 +253,8 @@ if __name__ == '__main__':
 
     if _send_all.lower() == 'false':
         for _each in tqdm(_exhib, leave=True, position=0, colour='Blue'):
-            app.check_data(_each)
-            app.send_message(_each)
+            app.check_data(_each, _send_all)
+            app.send_message(_each, _send_all)
             try:
                 _stats = sys.argv[2]
                 if _stats.upper() == 'TRUE':
@@ -254,4 +281,4 @@ if __name__ == '__main__':
             if answer == 'Yes':
                 app.send_all(_exhib, True)
             else:
-                app.send_all(_exhib, False)
+                app.send_all(_send_all, False)

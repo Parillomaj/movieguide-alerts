@@ -77,6 +77,7 @@ class MovieguideAlerts:
                         run_bool = True
                         continue
 
+
                     if r.status_code == 404 and 'too many' in r.text.lower():
                         for i in range(300, 0, -1):
                             sys.stdout.write(f'\rTrying again in {str(i)} .')
@@ -162,7 +163,7 @@ class MovieguideAlerts:
     def send_message(self, exhib):
         if len(self.unmatched) > 0:
             _from = 'matt.parillo@webedia-group.com'
-            to = 'matt.parillo@boxoffice.com,edm@boxoffice.com'
+            to = 'matt.parillo@boxoffice.com'
             msg = MIMEMultipart()
 
             msg['Subject'] = 'ACTION REQUIRED: Missing Movieguide Mappings'
@@ -188,11 +189,27 @@ class MovieguideAlerts:
         else:
             pass
 
+    def send_all(self, exhib, stats: bool):
+        # collect data for multiple sources
+        for each in exhib.split(','):
+            self.check_data(each)
+            if stats is True:
+                self.stats(each)
+                self.analyze()
+        combined_data = []
+        for file in os.listdir(f'{os.getcwd()}\\Files\\'):
+            if '.txt' in file.lower():
+                if os.path.getsize(f'{os.getcwd()}\\Files\\{file}.txt') > 0:
+                    with open(f'{os.getcwd}\\Files\\{file}.txt', 'r', encoding='utf-8') as reader:
+                        for line in reader:
+                            combined_data.append(f'{file.split("-")[0]}\t{line.strip()}\n')
+
 
 if __name__ == '__main__':
     app = MovieguideAlerts()
     try:
         _exhib = sys.argv[1].split(',')
+        _send_all = sys.argv[3]
     except IndexError:
         choices = []
         with open(f'{os.getcwd()}\\Sources.txt', 'r', encoding='utf-8') as _file:
@@ -203,19 +220,38 @@ if __name__ == '__main__':
         questions = [inquirer.Checkbox('imports', message='check which import?', choices=choices)]
         answers = inquirer.prompt(questions)
         _exhib = answers['imports']
+        question2 = [inquirer.List('SendAll', message='combing output?', choices=['true', 'false'])]
+        answers2 = inquirer.prompt(question2)
+        _send_all = answers2['SendAll']
 
-    for each in tqdm(_exhib, leave=True, position=0, colour='Blue'):
-        app.check_data(each)
-        app.send_message(each)
+    if _send_all.lower() == 'false':
+        for each in tqdm(_exhib, leave=True, position=0, colour='Blue'):
+            app.check_data(each)
+            app.send_message(each)
+            try:
+                _stats = sys.argv[2]
+                if _stats.upper() == 'TRUE':
+                    app.stats(each)
+                    app.analyze()
+            except IndexError:
+                choices = ['Yes', 'No']
+                question = [inquirer.List('stats', message='run stats analysis?', choices=choices)]
+                answer = inquirer.prompt(question)['stats']
+                if answer == 'Yes':
+                    app.stats(each)
+                    app.analyze()
+    else:
         try:
             _stats = sys.argv[2]
             if _stats.upper() == 'TRUE':
-                app.stats(each)
-                app.analyze()
+                app.send_all(_send_all, True)
+            else:
+                app.send_all(_send_all, False)
         except IndexError:
             choices = ['Yes', 'No']
             question = [inquirer.List('stats', message='run stats analysis?', choices=choices)]
             answer = inquirer.prompt(question)['stats']
             if answer == 'Yes':
-                app.stats(each)
-                app.analyze()
+                app.send_all(_send_all, True)
+            else:
+                app.send_all(_send_all, False)

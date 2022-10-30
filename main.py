@@ -61,7 +61,8 @@ class MovieguideAlerts:
                         except IndexError:
                             if [code[11][0][1].text, code[11][0][4].text] not in ex_codes:
                                 ex_codes.append([code[11][0][1].text, code[11][0][4].text])
-                except (requests.exceptions.RequestException, xml.etree.ElementTree.ParseError) as e:
+                except (requests.exceptions.RequestException, xml.etree.ElementTree.ParseError,
+                        ConnectionError) as e:
                     with open(f'{os.getcwd()}\\logs\\errors.txt', 'a+', encoding='utf-8') as error_file:
                         error_file.write(f'{datetime.datetime.now()}\t{_each}\t{type(e).__name__}\n')
 
@@ -218,6 +219,7 @@ class MovieguideAlerts:
         os.remove(f'{os.getcwd()}\\Files\\Movieguide-Movies.txt')
         for each in exhib.split(','):
             self.check_data(each, True)
+
             if stats is True:
                 self.stats(each)
                 self.analyze()
@@ -269,14 +271,14 @@ if __name__ == '__main__':
         try:
             _stats = sys.argv[2]
             if _stats.upper() == 'TRUE':
-                app.send_all(_send_all, True)
+                app.send_all(_exhib, True)
             else:
-                app.send_all(_send_all, False)
+                app.send_all(_exhib, False)
         except IndexError:
             choices = ['Yes', 'No']
             question = [inquirer.List('stats', message='run stats analysis?', choices=choices)]
             answer = inquirer.prompt(question)['stats']
             if answer == 'Yes':
-                app.send_all(_send_all, True)
+                app.send_all(_exhib, True)
             else:
                 app.send_all(_send_all, False)

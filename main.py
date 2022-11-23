@@ -64,7 +64,7 @@ class MovieguideAlerts:
                 except (requests.exceptions.RequestException, xml.etree.ElementTree.ParseError,
                         ConnectionError) as e:
                     with open(f'{os.getcwd()}\\logs\\errors.txt', 'a+', encoding='utf-8') as error_file:
-                        error_file.write(f'{datetime.datetime.now()}\t{_each}\t{type(e).__name__}\n')
+                        error_file.write(f'{datetime.datetime.now()}\t{exhib}\t{type(e).__name__}\n')
 
         elif self.toml_dict[exhib]['method'] == 'rts':
             for url in self.toml_dict[exhib]['urls']:
@@ -72,14 +72,15 @@ class MovieguideAlerts:
                 while run_bool is False:
                     try:
                         r = requests.get(url)
-                    except requests.exceptions.RequestException as e:
+                    except (requests.exceptions.RequestException,
+                            xml.etree.ElementTree.ParseError) as e:
                         with open(f'{os.getcwd()}\\logs\\errors.txt', 'a+', encoding='utf-8') as error_file:
-                            error_file.write(f'{datetime.datetime.now()}\t{_each}\t{type(e).__name__}\n')
+                            error_file.write(f'{datetime.datetime.now()}\t{exhib}\t{type(e).__name__}\n')
                         run_bool = True
                         continue
 
                     if r.status_code == 404 and 'too many' in r.text.lower():
-                        for i in range(300, 0, -1):
+                        for i in range(150, 0, -1):
                             sys.stdout.write(f'\rTrying again in {str(i)} .')
                             sys.stdout.flush()
                             time.sleep(1)

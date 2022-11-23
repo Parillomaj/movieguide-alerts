@@ -205,3 +205,20 @@ chain_id = 727
 filter_houses = ''
 search_on = 'chain'
 method = 'rts'
+
+[RIALTORTS]
+urls = ['http://442088.formovietickets.com:2235/showtimes.xml']
+prefix = 'FRMRTS'
+chain_id = 2541
+filter_houses = ''
+search_on = 'chain'
+method = 'rts'
+
+[HOMETOWNRTS]
+urls = ['http://64136.formovietickets.com:2235/showtimes.xml', 'http://33625.formovietickets.com:2235/showtimes.xml',
+        'http://9837.formovietickets.com:2235/showtimes.xml', 'http://926632.formovietickets.com:2235/showtimes.xml  ']
+prefix = 'HOMETOWN'
+chain_id = 1144
+filter_houses = ''
+search_on = 'chain'
+method = 'rts'

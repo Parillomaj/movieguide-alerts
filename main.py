@@ -49,9 +49,14 @@ class MovieguideAlerts:
                         payload = {'connectapitoken': url.split(',')[1]}
                         r = requests.get(f'{url.split(",")[0]}/ScheduledFilms', params=payload, timeout=None,
                                          verify=False)
+                        r2 = requests.get(f'{url.split(",")[0]}/Films', params=payload, timeout=None,
+                                          verify=False)
                     else:
                         r = requests.get(f'{url}/ScheduledFilms', timeout=None, verify=False)
+                        r2 = requests.get(f'{url}/Films', timeout=None, verify=False)
+
                     tree = Et.fromstring(r.text)
+                    tree2 = Et.fromstring(r2.text)
 
                     for code in tqdm(tree.findall('{http://www.w3.org/2005/Atom}entry'), colour='blue',
                                      position=0, leave=True):
@@ -61,6 +66,20 @@ class MovieguideAlerts:
                         except IndexError:
                             if [code[11][0][1].text, code[11][0][4].text] not in ex_codes:
                                 ex_codes.append([code[11][0][1].text, code[11][0][4].text])
+
+                    for code in tqdm(tree2.findall('{http://www.w3.org/2005/Atom}entry')):
+                        for tag in code:
+                            if 'content' in tag.tag:
+                                for date in tag[0]:
+                                    if 'OpeningDate' in date.tag:
+                                        try:
+                                            if datetime.datetime.strptime(date.text, '%Y-%m-%dT%H:%M:%S') > \
+                                                    datetime.datetime.today():
+                                                if [tag[0][0].text, tag[0][3].text] not in ex_codes:
+                                                    ex_codes.append([tag[0][0].text, tag[0][3].text])
+                                        except ValueError:
+                                            pass
+
                 except (requests.exceptions.RequestException, xml.etree.ElementTree.ParseError,
                         ConnectionError) as e:
                     with open(f'{os.getcwd()}\\logs\\errors.txt', 'a+', encoding='utf-8') as error_file:

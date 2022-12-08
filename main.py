@@ -77,7 +77,7 @@ class MovieguideAlerts:
                                                     datetime.datetime.today():
                                                 if [tag[0][0].text, tag[0][3].text] not in ex_codes:
                                                     ex_codes.append([tag[0][0].text, tag[0][3].text])
-                                        except ValueError:
+                                        except (ValueError, TypeError):
                                             pass
 
                 except (requests.exceptions.RequestException, xml.etree.ElementTree.ParseError,
@@ -100,18 +100,24 @@ class MovieguideAlerts:
 
                     if r.status_code == 404 and 'too many' in r.text.lower():
                         for i in range(150, 0, -1):
-                            sys.stdout.write(f'\rTrying again in {str(i)} .')
+                            sys.stdout.write(f'\rTrying again in {str(i)}.    ')
                             sys.stdout.flush()
                             time.sleep(1)
                             run_bool = False
                     else:
-                        tree = Et.fromstring(r.text)
-                        run_bool = True
+                        try:
+                            tree = Et.fromstring(r.text)
+                            run_bool = True
 
-                        for code in tqdm(tree.findall('filmtitle'), colour='blue', total=len(tree.findall('filmtitle')),
-                                         position=0, leave=True):
-                            if [code[10].text, code[0].text] not in ex_codes:
-                                ex_codes.append([code[10].text, code[0].text])
+                            for code in tqdm(tree.findall('filmtitle'), colour='blue', total=len(tree.findall('filmtitle')),
+                                             position=0, leave=True):
+                                if [code[10].text, code[0].text] not in ex_codes:
+                                    ex_codes.append([code[10].text, code[0].text])
+                        except xml.etree.ElementTree.ParseError as e:
+                            with open(f'{os.getcwd()}\\logs\\errors.txt', 'a+', encoding='utf-8') as error_file:
+                                error_file.write(f'{datetime.datetime.now()}\t{exhib}\t{type(e).__name__}\n')
+                            run_bool = True
+                            continue
 
         elif self.toml_dict[exhib]['method'] == 'omniterm':
             for url in self.toml_dict[exhib]['urls']:

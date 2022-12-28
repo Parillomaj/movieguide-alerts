@@ -288,3 +288,11 @@ chain_id = 1165
 filter_houses = ''
 search_on = 'chain'
 method = 'rts'
+
+[QUEENRTS]
+urls = ['http://229640.formovietickets.com:2235/showtimes.xml']
+prefix = 'QUEEN'
+chain_id = 2506
+filter_houses = ''
+search_on = 'chain'
+method = 'rts'

@@ -206,6 +206,14 @@ filter_houses = ''
 search_on = 'chain'
 method = 'rts'
 
+[QUEENRTS]
+urls = ['http://229640.formovietickets.com:2235/showtimes.xml']
+prefix = 'QUEEN'
+chain_id = 2506
+filter_houses = ''
+search_on = 'chain'
+method = 'rts'
+
 [LANDMARKPOSITIVE]
 urls = ['https://restapi.landmarktheatres.com/api/movie/']
 prefix = ''
@@ -213,3 +221,102 @@ chain_id = 212
 filter_houses = ''
 search_on = 'chain'
 method = 'positive'
+
+[METROVISTA]
+urls = ['https://ticketing.metrotheatres.com/WSVistaWebClient/OData.svc,486A415E-289C-408F-9C9B-9BF9E7F92C68']
+prefix = 'METROVISTA'
+chain_id = 183
+filter_houses = ''
+search_on = 'chain'
+method = 'vista'
+
+[TOUCHSTARRTS]
+urls = ['http://61139.formovietickets.com:2235/showtimes.xml', 'http://125.formovietickets.com:2235/showtimes.xml',
+        'http://126.formovietickets.com:2235/showtimes.xml', 'http://135620.formovietickets.com:2245/showtimes.xml',
+        'http://151590.formovietickets.com:2235/showtimes.xml']
+prefix = 'TOUCHSTARRTS'
+chain_id = 439
+filter_houses = ''
+search_on = 'chain'
+method = 'rts'
+
+[PRIMERTS]
+urls = ['http://6357.formovietickets.com:2235/showtimes.xml', 'http://512138.formovietickets.com:2235/showtimes.xml']
+prefix = 'PRIME'
+chain_id = 2444
+filter_houses = ''
+search_on = 'chain'
+method = 'rts'
+
+[VINERTS]
+urls = ['http://79655.formovietickets.com:2235/showtimes.xml']
+prefix = 'VINE'
+chain_id = 704
+filter_houses = ''
+search_on = 'chain'
+method = 'rts'
+
+[COBBLERTS]
+urls = ['https://64785.formovietickets.com:2235/showtimes.xml']
+prefix = 'COBBLE'
+chain_id = 932
+filter_houses = ''
+search_on = 'chain'
+method = 'rts'
+
+[SUNRAYRTS]
+urls = ['http://14438.formovietickets.com:2235/showtimes.xml']
+prefix = 'GENRTS'
+chain_id = 1510
+filter_houses = ''
+search_on = 'chain'
+method = 'rts'
+
+[FILMCARTS]
+urls = ['http://75579.formovietickets.com:2235/showtimes.xml']
+prefix = 'GENRTS'
+chain_id = 1165
+filter_houses = ''
+search_on = 'chain'
+method = 'rts'
+
+[CARTS]
+urls = ['https://80.formovietickets.com:2235/showtimes.xml', 'https://327904.formovietickets.com:2235/showtimes.xml']
+prefix = 'GENRTS'
+chain_id = 1165
+filter_houses = ''
+search_on = 'chain'
+method = 'rts'
+
+[HOMETOWNRTS]
+urls = ['http://64136.formovietickets.com:2235/showtimes.xml','http://33625.formovietickets.com:2235/showtimes.xml',
+        'http://9837.formovietickets.com:2235/showtimes.xml', 'http://926632.formovietickets.com:2235/showtimes.xml']
+prefix = 'HOMETOWN'
+chain_id = 1144
+filter_houses = '5961'
+search_on = 'chain'
+method = 'rts'
+
+[RIALTORTS]
+urls = ['http://442088.formovietickets.com:2235/showtimes.xml']
+prefix = 'FRMRTS'
+chain_id = 2541
+filter_houses = ''
+search_on = 'chain'
+method = 'rts'
+
+[EPICPOSITIVE]
+urls = ['https://restapi.epictheatres.com/api/movie/']
+prefix = 'EPIC'
+chain_id = 711
+filter_houses = ''
+search_on = 'chain'
+method = 'positive'
+
+[PARAMOUNTRTS]
+urls = ['http://21863.formovietickets.com:2235/showtimes.xml']
+prefix = 'GENRTS'
+chain_id = 207
+filter_houses = ''
+search_on = 'chain'
+method = 'rts'

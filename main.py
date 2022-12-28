@@ -110,8 +110,8 @@ class MovieguideAlerts:
                             tree = Et.fromstring(r.text)
                             run_bool = True
 
-                            for code in tqdm(tree.findall('filmtitle'), colour='blue', total=len(tree.findall('filmtitle')),
-                                             position=0, leave=True):
+                            for code in tqdm(tree.findall('filmtitle'), colour='blue',
+                                             total=len(tree.findall('filmtitle')), position=0, leave=True):
                                 if [code[10].text, code[0].text] not in ex_codes:
                                     ex_codes.append([code[10].text, code[0].text])
                         except xml.etree.ElementTree.ParseError as e:
@@ -123,12 +123,14 @@ class MovieguideAlerts:
         elif self.toml_dict[exhib]['method'] == 'omniterm':
             for url in self.toml_dict[exhib]['urls']:
                 r = requests.get(url)
+
         elif self.toml_dict[exhib]['method'] == 'veezi':
             for url in self.toml_dict[exhib]['urls']:
                 r = requests.get(url)
+
         elif self.toml_dict[exhib]['method'] == 'positive':
             for url in self.toml_dict[exhib]['urls']:
-                pos_basic = ('BoxOffice', 'd9b2gCeP')
+                pos_basic = HTTPBasicAuth('BoxOffice', 'd9b2gCeP')
                 r = requests.get(url, auth=pos_basic)
                 for each in r.json():
                     if [each["id"], each["title"]] not in ex_codes:
@@ -215,7 +217,7 @@ class MovieguideAlerts:
                 pass
         else:
             msg.attach(MIMEText('Missing Code(s); possible mapping / stw needed. File attached.\n\n'))
-            with open(f'{os.getcwd()}\\Files\\All\\Movieguide-Movies.txt') as fil:
+            with open(f'{os.getcwd()}\\Files\\All\\Movieguide-Movies.txt', 'r', encoding='utf-8') as fil:
                 part = MIMEApplication(fil.read())
                 part['Content-Disposition'] = 'attachment; filename="%s"' % f'Movieguide-Movies.txt'
                 msg.attach(part)

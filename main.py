@@ -3,6 +3,7 @@ import os
 import pyodbc
 import inquirer
 import requests
+from requests.auth import HTTPBasicAuth
 import sys
 import time
 import xml
@@ -99,6 +100,13 @@ class MovieguideAlerts:
         elif self.toml_dict[exhib]['method'] == 'veezi':
             for url in self.toml_dict[exhib]['urls']:
                 r = requests.get(url)
+        elif self.toml_dict[exhib]['method'] == 'positive':
+            for url in self.toml_dict[exhib]['urls']:
+                pos_basic = ('BoxOffice', 'd9b2gCeP')
+                r = requests.get(url, auth=pos_basic)
+                for each in r.json():
+                    if [each["id"], each["title"]] not in ex_codes:
+                        ex_codes.append([each["id"], each["title"]])
         else:
             sys.stdout.write('Not a valid method.')
             time.sleep(3)

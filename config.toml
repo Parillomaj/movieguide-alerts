@@ -205,3 +205,11 @@ chain_id = 727
 filter_houses = ''
 search_on = 'chain'
 method = 'rts'
+
+[LANDMARKPOSITIVE]
+urls = ['https://restapi.landmarktheatres.com/api/movie/']
+prefix = ''
+chain_id = 212
+filter_houses = ''
+search_on = 'chain'
+method = 'positive'

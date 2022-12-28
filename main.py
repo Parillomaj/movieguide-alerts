@@ -50,9 +50,14 @@ class MovieguideAlerts:
                         payload = {'connectapitoken': url.split(',')[1]}
                         r = requests.get(f'{url.split(",")[0]}/ScheduledFilms', params=payload, timeout=None,
                                          verify=False)
+                        r2 = requests.get(f'{url.split(",")[0]}/Films', params=payload, timeout=None,
+                                          verify=False)
                     else:
                         r = requests.get(f'{url}/ScheduledFilms', timeout=None, verify=False)
+                        r2 = requests.get(f'{url}/Films', timeout=None, verify=False)
+
                     tree = Et.fromstring(r.text)
+                    tree2 = Et.fromstring(r2.text)
 
                     for code in tqdm(tree.findall('{http://www.w3.org/2005/Atom}entry'), colour='blue',
                                      position=0, leave=True):
@@ -62,10 +67,24 @@ class MovieguideAlerts:
                         except IndexError:
                             if [code[11][0][1].text, code[11][0][4].text] not in ex_codes:
                                 ex_codes.append([code[11][0][1].text, code[11][0][4].text])
+
+                    for code in tqdm(tree2.findall('{http://www.w3.org/2005/Atom}entry')):
+                        for tag in code:
+                            if 'content' in tag.tag:
+                                for date in tag[0]:
+                                    if 'OpeningDate' in date.tag:
+                                        try:
+                                            if datetime.datetime.strptime(date.text, '%Y-%m-%dT%H:%M:%S') > \
+                                                    datetime.datetime.today():
+                                                if [tag[0][0].text, tag[0][3].text] not in ex_codes:
+                                                    ex_codes.append([tag[0][0].text, tag[0][3].text])
+                                        except (ValueError, TypeError):
+                                            pass
+
                 except (requests.exceptions.RequestException, xml.etree.ElementTree.ParseError,
                         ConnectionError) as e:
                     with open(f'{os.getcwd()}\\logs\\errors.txt', 'a+', encoding='utf-8') as error_file:
-                        error_file.write(f'{datetime.datetime.now()}\t{_each}\t{type(e).__name__}\n')
+                        error_file.write(f'{datetime.datetime.now()}\t{exhib}\t{type(e).__name__}\n')
 
         elif self.toml_dict[exhib]['method'] == 'rts':
             for url in self.toml_dict[exhib]['urls']:
@@ -73,26 +92,33 @@ class MovieguideAlerts:
                 while run_bool is False:
                     try:
                         r = requests.get(url)
-                    except requests.exceptions.RequestException as e:
+                    except (requests.exceptions.RequestException,
+                            xml.etree.ElementTree.ParseError) as e:
                         with open(f'{os.getcwd()}\\logs\\errors.txt', 'a+', encoding='utf-8') as error_file:
-                            error_file.write(f'{datetime.datetime.now()}\t{_each}\t{type(e).__name__}\n')
+                            error_file.write(f'{datetime.datetime.now()}\t{exhib}\t{type(e).__name__}\n')
                         run_bool = True
                         continue
 
                     if r.status_code == 404 and 'too many' in r.text.lower():
-                        for i in range(300, 0, -1):
-                            sys.stdout.write(f'\rTrying again in {str(i)} .')
+                        for i in range(150, 0, -1):
+                            sys.stdout.write(f'\rTrying again in {str(i)}.    ')
                             sys.stdout.flush()
                             time.sleep(1)
                             run_bool = False
                     else:
-                        tree = Et.fromstring(r.text)
-                        run_bool = True
+                        try:
+                            tree = Et.fromstring(r.text)
+                            run_bool = True
 
-                        for code in tqdm(tree.findall('filmtitle'), colour='blue', total=len(tree.findall('filmtitle')),
-                                         position=0, leave=True):
-                            if [code[10].text, code[0].text] not in ex_codes:
-                                ex_codes.append([code[10].text, code[0].text])
+                            for code in tqdm(tree.findall('filmtitle'), colour='blue', total=len(tree.findall('filmtitle')),
+                                             position=0, leave=True):
+                                if [code[10].text, code[0].text] not in ex_codes:
+                                    ex_codes.append([code[10].text, code[0].text])
+                        except xml.etree.ElementTree.ParseError as e:
+                            with open(f'{os.getcwd()}\\logs\\errors.txt', 'a+', encoding='utf-8') as error_file:
+                                error_file.write(f'{datetime.datetime.now()}\t{exhib}\t{type(e).__name__}\n')
+                            run_bool = True
+                            continue
 
         elif self.toml_dict[exhib]['method'] == 'omniterm':
             for url in self.toml_dict[exhib]['urls']:
@@ -136,11 +162,9 @@ class MovieguideAlerts:
             in_codes.sort(key=lambda x: x[0])
 
             self.unmatched = [x for x in ex_codes if all(y[0] not in x for y in in_codes)]
-
             with open(f'{os.getcwd()}\\Files\\{exhib}-Movies.txt', 'w+', encoding='utf-8') as out_file:
                 for _code in self.unmatched:
                     out_file.write(f'{_code[0]}\t{_code[1]}\n')
-            out_file.close()
 
     def stats(self, exhib):
         today = datetime.datetime.today().strftime('%Y%m%d-%H:%M')
@@ -169,36 +193,51 @@ class MovieguideAlerts:
         activity_file.close()
 
     def send_message(self, exhib):
-        if len(self.unmatched) > 0:
-            _from = 'matt.parillo@webedia-group.com'
-            to = 'matt.parillo@boxoffice.com'
-            msg = MIMEMultipart()
-
-            msg['Subject'] = 'ACTION REQUIRED: Missing Movieguide Mappings'
-            msg['From'] = _from
-            msg['To'] = to
-            msg.attach(MIMEText('Missing %s Code(s) from %s; possible mapping / stw needed. File attached.\n\n' %
-                                (str(len(self.unmatched)), exhib)))
-            with open(f'{os.getcwd()}\\Files\\{exhib}-Movies.txt') as fil:
+        _from = 'matt.parillo@webedia-group.com'
+        to = 'matt.parillo@boxoffice.com,edm@boxoffice.com'
+        msg = MIMEMultipart()
+        msg['Subject'] = 'ACTION REQUIRED: Missing Movieguide Mappings'
+        msg['From'] = _from
+        msg['To'] = to
+        if exhib.lower() != 'all':
+            if len(self.unmatched) > 0:
+                msg.attach(MIMEText('Missing %s Code(s) from %s; possible mapping / stw needed. File attached.\n\n' %
+                                    (str(len(self.unmatched)), exhib)))
+                with open(f'{os.getcwd()}\\Files\\{exhib}-Movies.txt') as fil:
+                    part = MIMEApplication(fil.read())
+                    part['Content-Disposition'] = 'attachment; filename="%s"' % f'{exhib}-Movies.txt'
+                    msg.attach(part)
+                    fil.seek(0)
+                    for line in fil:
+                        msg.attach(MIMEText(f'{line}'))
+                fil.close()
+            else:
+                pass
+        else:
+            msg.attach(MIMEText('Missing Code(s); possible mapping / stw needed. File attached.\n\n'))
+            with open(f'{os.getcwd()}\\Files\\All\\Movieguide-Movies.txt') as fil:
                 part = MIMEApplication(fil.read())
-                part['Content-Disposition'] = 'attachment; filename="%s"' % f'{exhib}-Movies.txt'
+                part['Content-Disposition'] = 'attachment; filename="%s"' % f'Movieguide-Movies.txt'
                 msg.attach(part)
                 fil.seek(0)
                 for line in fil:
                     msg.attach(MIMEText(f'{line}'))
             fil.close()
 
-            s = smtplib.SMTP('smtp.gmail.com', 587)
-            s.starttls()
-            s.ehlo()
-            s.login('matt.parillo@webedia-group.com', 'ccgvmrhwltnbgqem')
-            s.sendmail(_from, to.split(','), msg.as_string())
-            s.quit()
-        else:
-            pass
+        s = smtplib.SMTP('smtp.gmail.com', 587)
+        s.starttls()
+        s.ehlo()
+        s.login('matt.parillo@webedia-group.com', 'ccgvmrhwltnbgqem')
+        s.sendmail(_from, to.split(','), msg.as_string())
+        s.quit()
 
     def send_all(self, exhib, stats: bool):
         # collect data for multiple sources
+        try:
+            os.remove(f'{os.getcwd()}\\Files\\All\\Movieguide-Movies.txt')
+        except FileNotFoundError:
+            pass
+
         for each in exhib:
             self.check_data(each)
             if stats is True:
@@ -207,10 +246,19 @@ class MovieguideAlerts:
         combined_data = []
         for file in os.listdir(f'{os.getcwd()}\\Files\\'):
             if '.txt' in file.lower():
-                if os.path.getsize(f'{os.getcwd()}\\Files\\{file}.txt') > 0:
-                    with open(f'{os.getcwd}\\Files\\{file}.txt', 'r', encoding='utf-8') as reader:
-                        for line in reader:
-                            combined_data.append(f'{file.split("-")[0]}\t{line.strip()}\n')
+                if file.split('-')[0].lower() in [x.lower() for x in exhib]:
+                    if os.path.getsize(f'{os.getcwd()}\\Files\\{file}') > 0:
+                        with open(f'{os.getcwd()}\\Files\\{file}', 'r', encoding='utf-8') as reader:
+                            for line in reader:
+                                combined_data.append(f'{file.split("-")[0]}\t{line.strip()}\n')
+        if len(combined_data) > 0:
+            with open(f'{os.getcwd()}\\Files\\All\\Movieguide-Movies.txt', 'w+', encoding='utf-8') as all_movies:
+                for movie in combined_data:
+                    all_movies.write(movie)
+
+            self.send_message('all')
+        else:
+            pass
 
 
 if __name__ == '__main__':
@@ -235,7 +283,6 @@ if __name__ == '__main__':
     if _send_all.lower() == 'false':
         for _each in tqdm(_exhib, leave=True, position=0, colour='Blue'):
             app.check_data(_each)
-            app.send_message(_each)
             try:
                 _stats = sys.argv[2]
                 if _stats.upper() == 'TRUE':

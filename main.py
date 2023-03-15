@@ -148,16 +148,25 @@ class MovieguideAlerts:
                        where source = '%s'
                     """ % exhib
             for code in self.cursor.execute(query).fetchall():
-                if code[3] is None:
-                    in_codes.append([code[2], 'None'])
-                else:
-                    in_codes.append([code[2], code[3]])
+                try:
+                    if code[3] is None:
+                        in_codes.append([code[2], 'None'])
+                    else:
+                        try:
+                            in_codes.append([code[2], code[3]])
+                        except IndexError:
+                            pass
+                except (TypeError, IndexError):
+                    pass
 
             ignore_query = """select code from Cinema..ignore 
                               where source = '%s'
                            """ % exhib
             for code in self.cursor.execute(ignore_query).fetchall():
-                in_codes.append([code[0], 'None'])
+                try:
+                    in_codes.append([code[0], 'None'])
+                except (TypeError, IndexError):
+                    pass
 
             # compare to see if any codes are missing; if yes, send an email; if no, pass
             ex_codes.sort(key=lambda x: x[0])
@@ -166,24 +175,29 @@ class MovieguideAlerts:
             self.unmatched = [x for x in ex_codes if all(y[0] not in x for y in in_codes)]
             with open(f'{os.getcwd()}\\Files\\{exhib}-Movies.txt', 'w+', encoding='utf-8') as out_file:
                 for _code in self.unmatched:
-                    out_file.write(f'{_code[0]}\t{_code[1]}\n')
+                    try:
+                        out_file.write(f'{_code[0]}\t{_code[1]}\n')
+                    except (IndexError, TypeError):
+                        pass
 
     def stats(self, exhib):
         today = datetime.datetime.today().strftime('%Y%m%d-%H:%M')
         with open(f'{os.getcwd()}\\stats\\activity.dat', 'a', encoding='utf-8') as stats_file:
             stats_file.write(f'{exhib}-{today}-{len(self.unmatched)}\n')
-        stats_file.close()
 
     @staticmethod
     def analyze():
         data = []
         with open(f'{os.getcwd()}\\stats\\activity.dat', 'r', encoding='utf-8') as activity_file:
             for line in activity_file:
-                _date = datetime.datetime.strptime(line.split('-')[1], '%Y%m%d')
-                _time = line.split('-')[2]
-                exhib = line.split('-')[0]
-                num_codes = int(line.split('-')[3])
-                data.append([_date, _time, exhib, num_codes])
+                try:
+                    _date = datetime.datetime.strptime(line.split('-')[1], '%Y%m%d')
+                    _time = line.split('-')[2]
+                    exhib = line.split('-')[0]
+                    num_codes = int(line.split('-')[3])
+                    data.append([_date, _time, exhib, num_codes])
+                except (ValueError, IndexError):
+                    pass
 
         df = pd.DataFrame(data, columns=['Date', 'Time', 'Exhib', 'NumCodes']).groupby(['Exhib', 'Date']).sum()
         plot = sns.lineplot(data=df, x='Date', y='NumCodes', hue='Exhib')

@@ -320,3 +320,11 @@ chain_id = 207
 filter_houses = ''
 search_on = 'chain'
 method = 'rts'
+
+[Fandango]
+urls = ['http://21863.formovietickets.com:2235/showtimes.xmlvv']
+prefix = 'GENRTS'
+chain_id = 207
+filter_houses = ''
+search_on = 'chain'
+method = 'rts'

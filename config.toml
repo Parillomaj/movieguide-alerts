@@ -321,6 +321,14 @@ filter_houses = ''
 search_on = 'chain'
 method = 'rts'
 
+[VISIONMAXRTS]
+urls = ['http://33964.formovietickets.com:2235/showtimes.xml']
+prefix = 'GENRTS'
+chain_id = 1137
+filter_houses = ''
+search_on = 'chain'
+method = 'rts'
+
 [Fandango]
 urls = ['http://21863.formovietickets.com:2235/showtimes.xmlvv']
 prefix = 'GENRTS'

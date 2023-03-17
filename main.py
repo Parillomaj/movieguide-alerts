@@ -135,6 +135,14 @@ class MovieguideAlerts:
                 for each in r.json():
                     if [each["id"], each["title"]] not in ex_codes:
                         ex_codes.append([each["id"], each["title"]])
+
+        elif self.toml_dict[exhib]['method'] == 'fandango':
+            with open('S:\\MtxCrawler\\GatherTimes\\Fandango\\FandangoCodesOut-Movies.txt', 'r', encoding='utf-8') \
+                    as fan_file:
+                for line in tqdm(fan_file, colour='blue'):
+                    if [line.split('\t')[0], line.split('\t')[1]] not in ex_codes:
+                        ex_codes.append([line.split('\t')[0], line.split('\t')[1]])
+
         else:
             sys.stdout.write('Not a valid method.')
             time.sleep(3)

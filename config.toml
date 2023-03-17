@@ -330,9 +330,9 @@ search_on = 'chain'
 method = 'rts'
 
 [Fandango]
-urls = ['http://21863.formovietickets.com:2235/showtimes.xmlvv']
-prefix = 'GENRTS'
-chain_id = 207
+urls = ['F:\fandango']
+prefix = ''
+chain_id = ''
 filter_houses = ''
-search_on = 'chain'
-method = 'rts'
+search_on = 'fandango'
+method = 'fandango'

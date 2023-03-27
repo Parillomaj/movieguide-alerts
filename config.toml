@@ -329,10 +329,75 @@ filter_houses = ''
 search_on = 'chain'
 method = 'rts'
 
-[Fandango]
+[FANDANGO]
 urls = ['F:\fandango']
 prefix = ''
 chain_id = ''
 filter_houses = ''
 search_on = 'fandango'
 method = 'fandango'
+
+[EVERYMANVISTA]
+urls = ['https://reservations.everymancinema.com/WSVistaWebClient/odata.svc,29127l315u83340fev033Us477Cnr2nq0D624qJR5269Q44C0nn1778TA87v']
+prefix = 'EVERYMAN'
+chain_id = 1077
+filter_houses = ''
+search_on = 'chain'
+method = 'vista'
+
+[CELEBRITYRTS]
+urls = ['https://33015.formovietickets.com:2235/showtimes.xml', 'http://22792.formovietickets.com:2235/showtimes.xml',
+        'http://62050.formovietickets.com:2235/showtimes.xml']
+prefix = 'CELEBRITY'
+chain_id = 729
+filter_houses = ''
+search_on = 'chain'
+method = 'rts'
+
+[HARPERRTS]
+urls = ['http://82003.formovietickets.com:2235/showtimes.xml']
+prefix = 'HARPER'
+chain_id = 2416
+filter_houses = ''
+search_on = 'chain'
+method = 'rts'
+
+[CARVERRTS]
+urls = ['http://81785.formovietickets.com:2235/showtimes.xml']
+prefix = 'CARVER'
+chain_id = 2028
+filter_houses = ''
+search_on = 'chain'
+method = 'rts'
+
+[ABINGDONRTS]
+urls = ['http://41110.formovietickets.com:2235/showtimes.xml']
+prefix = 'ABINGDON'
+chain_id = 780
+filter_houses = ''
+search_on = 'chain'
+method = 'rts'
+
+[PARKPLAZARTS]
+urls = ['http://10062.formovietickets.com:2235/showtimes.xml']
+prefix = 'PARKPLAZA'
+chain_id = 1321
+filter_houses = ''
+search_on = 'chain'
+method = 'rts'
+
+[COYOTERTS]
+urls = ['http://310377.formovietickets.com:2235/showtimes.xml']
+prefix = 'COYOTE'
+chain_id = 2297
+filter_houses = ''
+search_on = 'chain'
+method = 'rts'
+
+[BOULEVARDRTS]
+urls = ['http://863314.formovietickets.com:2235/showtimes.xml']
+prefix = 'BOULEVARD'
+chain_id = 2549
+filter_houses = ''
+search_on = 'chain'
+method = 'rts'

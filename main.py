@@ -137,11 +137,20 @@ class MovieguideAlerts:
                         ex_codes.append([each["id"], each["title"]])
 
         elif self.toml_dict[exhib]['method'] == 'fandango':
-            with open('S:\\MtxCrawler\\GatherTimes\\Fandango\\FandangoCodesOut-Movies.txt', 'r', encoding='utf-8') \
-                    as fan_file:
-                for line in tqdm(fan_file, colour='blue'):
-                    if [line.split('\t')[0], line.split('\t')[1]] not in ex_codes:
-                        ex_codes.append([line.split('\t')[0], line.split('\t')[1]])
+            try:
+                with open('S:\\MtxCrawler\\GatherTimes\\Fandango\\FandangoCodesOut-Movies.txt', 'r', encoding='utf-8') \
+                        as fan_file:
+                    for line in tqdm(fan_file, colour='blue'):
+                        if not line.strip():
+                            pass
+                        else:
+                            if [line.split('\t')[0], line.split('\t')[1]] not in ex_codes:
+                                ex_codes.append([line.split('\t')[0].strip(), line.split('\t')[1].strip()])
+            except FileNotFoundError:
+                for i in range(3):
+                    sys.stdout.write(f'No file found{"."*i}')
+                    time.sleep(1)
+                    exit(1)
 
         else:
             sys.stdout.write('Not a valid method.')
@@ -157,8 +166,10 @@ class MovieguideAlerts:
                     """ % exhib
             for code in self.cursor.execute(query).fetchall():
                 try:
-                    if code[3] is None:
+                    if code[3] is None or code[3] is '':
                         in_codes.append([code[2], 'None'])
+                    elif code[2] is None or code[2] is '':
+                        pass
                     else:
                         try:
                             in_codes.append([code[2], code[3]])
@@ -172,13 +183,19 @@ class MovieguideAlerts:
                            """ % exhib
             for code in self.cursor.execute(ignore_query).fetchall():
                 try:
-                    in_codes.append([code[0], 'None'])
+                    if code[0] == '0' or code[0] == 'test' or code[0] is None:
+                        pass
+                    else:
+                        in_codes.append([code[0], 'None'])
                 except (TypeError, IndexError):
                     pass
 
             # compare to see if any codes are missing; if yes, send an email; if no, pass
-            ex_codes.sort(key=lambda x: x[0])
-            in_codes.sort(key=lambda x: x[0])
+            try:
+                ex_codes.sort(key=lambda x: x[0])
+                in_codes.sort(key=lambda x: x[0])
+            except TypeError:
+                pass
 
             self.unmatched = [x for x in ex_codes if all(y[0] not in x for y in in_codes)]
             with open(f'{os.getcwd()}\\Files\\{exhib}-Movies.txt', 'w+', encoding='utf-8') as out_file:
@@ -251,7 +268,7 @@ class MovieguideAlerts:
         s = smtplib.SMTP('smtp.gmail.com', 587)
         s.starttls()
         s.ehlo()
-        s.login('matt.parillo@webedia-group.com', 'ccgvmrhwltnbgqem')
+        s.login('matt.parillo@webedia-group.com', 'vbbjgnbxdkqmqbir')
         s.sendmail(_from, to.split(','), msg.as_string())
         s.quit()
 

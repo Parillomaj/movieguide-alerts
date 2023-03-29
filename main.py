@@ -268,7 +268,7 @@ class MovieguideAlerts:
         s = smtplib.SMTP('smtp.gmail.com', 587)
         s.starttls()
         s.ehlo()
-        s.login('matt.parillo@webedia-group.com', 'vbbjgnbxdkqmqbir')
+        s.login('matt.parillo@webedia-group.com', 'zcugkqihchhxhnng')
         s.sendmail(_from, to.split(','), msg.as_string())
         s.quit()
 

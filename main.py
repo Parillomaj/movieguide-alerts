@@ -242,7 +242,7 @@ class MovieguideAlerts:
 
     def send_message(self, exhib):
         _from = 'matt.parillo@webedia-group.com'
-        to = 'matt.parillo@boxoffice.com,edm@boxoffice.com'
+        to = 'matt.parillo@boxoffice.com,edm@boxoffice.com,dion.white@boxoffice.com'
         msg = MIMEMultipart()
         msg['Subject'] = 'ACTION REQUIRED: Missing Movieguide Mappings'
         msg['From'] = _from

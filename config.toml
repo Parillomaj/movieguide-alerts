@@ -401,3 +401,28 @@ chain_id = 2549
 filter_houses = ''
 search_on = 'chain'
 method = 'rts'
+
+[WARSAWRTS]
+urls = ['https://62720.formovietickets.com:2235/showtimes.xml', 'https://81825.formovietickets.com:2235/showtimes.xml']
+prefix = 'FRMRTS'
+chain_id = 1588
+filter_houses = ''
+search_on = 'chain'
+method = 'rts'
+
+[GROSSRTS]
+urls = ['https://59311.formovietickets.com:2235/showtimes.xml']
+prefix = 'GROSS'
+chain_id = 643
+filter_houses = ''
+search_on = 'chain'
+method = 'rts'
+
+[KEWRTS]
+urls = ['https://64785.formovietickets.com:2235/showtimes.xml', 'https://29595.formovietickets.com:2235/showtimes.xml',
+        'https://43045.formovietickets.com:2235/showtimes.xml']
+prefix = 'KEW'
+chain_id = 628
+filter_houses = ''
+search_on = 'chain'
+method = 'rts'

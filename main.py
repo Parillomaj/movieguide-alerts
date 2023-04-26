@@ -179,7 +179,7 @@ class MovieguideAlerts:
                         pass
                     else:
                         try:
-                            in_codes.append([code[2], code[3]])
+                            in_codes.append([code[2], code[3], code[8]])
                         except IndexError:
                             pass
                 except (TypeError, IndexError):
@@ -227,7 +227,8 @@ class MovieguideAlerts:
                     _time = line.split('-')[2]
                     exhib = line.split('-')[0]
                     num_codes = int(line.split('-')[3])
-                    data.append([_date, _time, exhib, num_codes])
+                    if _date > (datetime.datetime.today() - datetime.timedelta(days=60)):
+                        data.append([_date, _time, exhib, num_codes])
                 except (ValueError, IndexError):
                     pass
 

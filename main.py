@@ -89,7 +89,8 @@ class MovieguideAlerts:
 
                 except (requests.exceptions.RequestException, xml.etree.ElementTree.ParseError,
                         ConnectionError) as e:
-                    with open(f'{os.getcwd()}\\logs\\errors.txt', 'a+', encoding='utf-8') as error_file:
+                    with open(f'{os.getcwd()}\\logs\\{self.toml_dict[exhib]["method"]}errors.txt', 'a+',
+                              encoding='utf-8') as error_file:
                         error_file.write(f'{datetime.datetime.now()}\t{exhib}\t{type(e).__name__}\n')
                         continue
 
@@ -101,7 +102,8 @@ class MovieguideAlerts:
                         r = requests.get(url)
                     except (requests.exceptions.RequestException,
                             xml.etree.ElementTree.ParseError) as e:
-                        with open(f'{os.getcwd()}\\logs\\errors.txt', 'a+', encoding='utf-8') as error_file:
+                        with open(f'{os.getcwd()}\\logs\\{self.toml_dict[exhib]["method"]}errors.txt', 'a+',
+                                  encoding='utf-8') as error_file:
                             error_file.write(f'{datetime.datetime.now()}\t{exhib}\t{type(e).__name__}\n')
                         run_bool = True
                         continue
@@ -121,12 +123,13 @@ class MovieguideAlerts:
                                              total=len(tree.findall('filmtitle')), position=0, leave=True):
                                 if [code[10].text, code[0].text] not in ex_codes:
                                     ex_codes.append([code[10].text, code[0].text])
-                            for code in tqdm(tree.findall('upcomingtitles'), colour='blue',
-                                             total=len(tree.findall('upcomingtitles')), position=0, leave=True):
+                            for code in tqdm(tree.findall('title'), colour='blue',
+                                             total=len(tree.findall('title')), position=0, leave=True):
                                 if [code[9].text, code[0].text] not in ex_codes:
                                     ex_codes.append([code[9].text, code[0].text])
-                        except xml.etree.ElementTree.ParseError as e:
-                            with open(f'{os.getcwd()}\\logs\\errors.txt', 'a+', encoding='utf-8') as error_file:
+                        except (xml.etree.ElementTree.ParseError, IndexError) as e:
+                            with open(f'{os.getcwd()}\\logs\\{self.toml_dict[exhib]["method"]}errors.txt', 'a+',
+                                      encoding='utf-8') as error_file:
                                 error_file.write(f'{datetime.datetime.now()}\t{exhib}\t{type(e).__name__}\n')
                             run_bool = True
                             continue

@@ -426,3 +426,19 @@ chain_id = 628
 filter_houses = ''
 search_on = 'chain'
 method = 'rts'
+
+[CROWLEYRTS]
+urls = ['https://43449.formovietickets.com:2235/showtimes.xml']
+prefix = 'CROWLEY'
+chain_id = 1228
+filter_houses = ''
+search_on = 'chain'
+method = 'rts'
+
+[SANCTUARYRTS]
+urls = ['https://920994.formovietickets.com:2235/showtimes.xml']
+prefix = 'SANCTUARY'
+chain_id = ''
+filter_houses = ''
+search_on = 'chain'
+method = 'rts'

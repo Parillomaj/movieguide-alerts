@@ -121,6 +121,10 @@ class MovieguideAlerts:
                                              total=len(tree.findall('filmtitle')), position=0, leave=True):
                                 if [code[10].text, code[0].text] not in ex_codes:
                                     ex_codes.append([code[10].text, code[0].text])
+                            for code in tqdm(tree.findall('upcomingtitles'), colour='blue',
+                                             total=len(tree.findall('upcomingtitles')), position=0, leave=True):
+                                if [code[9].text, code[0].text] not in ex_codes:
+                                    ex_codes.append([code[9].text, code[0].text])
                         except xml.etree.ElementTree.ParseError as e:
                             with open(f'{os.getcwd()}\\logs\\errors.txt', 'a+', encoding='utf-8') as error_file:
                                 error_file.write(f'{datetime.datetime.now()}\t{exhib}\t{type(e).__name__}\n')

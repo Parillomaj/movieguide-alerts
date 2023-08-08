@@ -442,3 +442,68 @@ chain_id = ''
 filter_houses = ''
 search_on = 'chain'
 method = 'rts'
+
+[SUNRTS]
+urls = ['https://40102.formovietickets.com:2235/showtimes.xml']
+prefix = 'SUNRTS'
+chain_id = 2588
+filter_houses = ''
+search_on = 'chain'
+method = 'rts'
+
+[AMERICARTS]
+urls = ['https://70351.formovietickets.com:2235/showtimes.xml', 'https://74999.formovietickets.com:2235/showtimes.xml',
+        'https://501628.formovietickets.com:2235/showtimes.xml']
+prefix = 'SUNRTS'
+chain_id = 2588
+filter_houses = ''
+search_on = 'chain'
+method = 'rts'
+
+[SHOWBIZVISTA]
+urls = ['https://api.showbizcinemas.com/wsvistawebclient/Odata.svc,3812731d294845f184e94fd8f4fc7645']
+prefix = 'SHOWBIZVISTA'
+chain_id = 946
+filter_houses = ''
+search_on = 'chain'
+method = 'vista'
+
+[EVOVISTA]
+urls = ['http://vista.evo-entertainment.com/WSVistaWebClient/OData.svc,15dd5453e44a409783e61f16ebcdcce5']
+prefix = 'EVOVISTA'
+chain_id = 2152
+filter_houses = ''
+search_on = 'chain'
+method = 'vista'
+
+[SCUS]
+urls = ['https://mobile.showcasecinemas.com/wsvistawebclient/odata.svc,c214a24bb9a2440b93d95a5fc357a6a0']
+prefix = 'SHOWCASEVISTA'
+chain_id = 20
+filter_houses = ''
+search_on = 'chain'
+method = 'vista'
+
+[STARLIGHTVISTA]
+urls = ['https://ticketing.starlightcinemas.com/wsvistawebclient/OData.svc,8c4d8719344c4f86a7a72c4e0db86989']
+prefix = 'STARLIGHTVISTA'
+chain_id = 1605
+filter_houses = ''
+search_on = 'chain'
+method = 'vista'
+
+[MJRVISTA]
+urls = ['https://connect.mjrtheatres.com/WSVistaWebClient/OData.svc,403e83ce-7d76-4889-8616-75e434931a3e']
+prefix = 'MJRVISTA'
+chain_id = 607
+filter_houses = ''
+search_on = 'chain'
+method = 'vista'
+
+[CINEMAXXDK]
+urls = ['https://68.219.218.222/WSVistaWebClient/OData.svc,76b030ce85fc431e8c8d1b10d7325e68']
+prefix = 'CINEMAXX'
+chain_id = 1996
+filter_houses = ''
+search_on = 'chain'
+method = 'vista'

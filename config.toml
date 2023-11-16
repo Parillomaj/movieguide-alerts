@@ -476,14 +476,6 @@ filter_houses = ''
 search_on = 'chain'
 method = 'vista'
 
-[SCUS]
-urls = ['https://mobile.showcasecinemas.com/wsvistawebclient/odata.svc,c214a24bb9a2440b93d95a5fc357a6a0']
-prefix = 'SHOWCASEVISTA'
-chain_id = 20
-filter_houses = ''
-search_on = 'chain'
-method = 'vista'
-
 [STARLIGHTVISTA]
 urls = ['https://ticketing.starlightcinemas.com/wsvistawebclient/OData.svc,8c4d8719344c4f86a7a72c4e0db86989']
 prefix = 'STARLIGHTVISTA'
@@ -500,10 +492,60 @@ filter_houses = ''
 search_on = 'chain'
 method = 'vista'
 
-[CINEMAXXDK]
-urls = ['https://68.219.218.222/WSVistaWebClient/OData.svc,76b030ce85fc431e8c8d1b10d7325e68']
+[CINEMAXXVISTA]
+urls = ['https://vista.biografenvue.dk/WSVistaWebClient/OData.svc,a4ba1eed53ef4fbfa377fccfb29dff92']
 prefix = 'CINEMAXX'
 chain_id = 1996
+filter_houses = ''
+search_on = 'chain'
+method = 'vista'
+
+[ELKADERRTS]
+urls = ['https://3831.formovietickets.com:2235/showtimes.xml', 'https://74232.formovietickets.com:2235/showtimes.xml',
+        'https://17666.formovietickets.com:2235/showtimes.xml']
+prefix = 'FRMRTS'
+chain_id = 1512
+filter_houses = ''
+search_on = 'chain'
+method = 'rts'
+
+[CABBRTS]
+urls = ['https://894817.formovietickets.com:2235/showtimes.xml', 'https://793806.formovietickets.com:2235/showtimes.xml']
+prefix = 'FRMRTS'
+chain_id = 2555
+filter_houses = ''
+search_on = 'chain'
+method = 'rts'
+
+[SPOTLIGHTRTS]
+urls = ['https://694207.formovietickets.com:2235/showtimes.xml', 'https://62720.formovietickets.com:2235/showtimes.xml',
+        'https://81825.formovietickets.com:2235/showtimes.xml', 'https://371349.formovietickets.com:2235/showtimes.xml']
+prefix = 'FRMRTS'
+chain_id = 2555
+filter_houses = ''
+search_on = 'chain'
+method = 'rts'
+
+[ONYXRTS]
+urls = ['https://756038.formovietickets.com:2235/showtimes.xml']
+prefix = 'FRMRTS'
+chain_id = 2528
+filter_houses = ''
+search_on = 'chain'
+method = 'rts'
+
+[SHOWCASEUKVISTA]
+urls = ['https://webconnect.uatwmpnatl.co.uk/WSVistaWebClient/OData.svc,IBAHkRr30SQXhUgqXHyPZcMGQaF55mur']
+prefix = 'SHOWCASEUK'
+chain_id = 577
+filter_houses = ''
+search_on = 'chain'
+method = 'vista'
+
+[SCUKTEMPVISTA]
+urls = ['https://webconnect.uatwmpnatl.co.uk/WSVistaWebClient/OData.svc,IBAHkRr30SQXhUgqXHyPZcMGQaF55mur']
+prefix = 'SHOWCASE'
+chain_id = 577
 filter_houses = ''
 search_on = 'chain'
 method = 'vista'

@@ -66,8 +66,16 @@ class MovieguideAlerts:
                     for code in tqdm(tree.findall('{http://www.w3.org/2005/Atom}entry'), colour='blue',
                                      position=0, leave=True):
                         try:
-                            if [code[12][0][1].text, code[12][0][4].text] not in ex_codes:
-                                ex_codes.append([code[12][0][1].text, code[12][0][4].text])
+                            if exhib == 'SCUKTEMPVISTA':
+                                try:
+                                    if [code[12][0][16].text, code[12][0][4].text] not in ex_codes:
+                                        ex_codes.append([code[12][0][16].text, code[12][0][4].text])
+                                except IndexError:
+                                    if [code[11][0][16].text, code[11][0][4].text] not in ex_codes:
+                                        ex_codes.append([code[11][0][16].text, code[11][0][4].text])
+                            else:
+                                if [code[12][0][1].text, code[12][0][4].text] not in ex_codes:
+                                    ex_codes.append([code[12][0][1].text, code[12][0][4].text])
                         except IndexError:
                             if [code[11][0][1].text, code[11][0][4].text] not in ex_codes:
                                 ex_codes.append([code[11][0][1].text, code[11][0][4].text])
@@ -82,8 +90,12 @@ class MovieguideAlerts:
 
                                             if datetime.datetime.strptime(date.text, '%Y-%m-%dT%H:%M:%S') > \
                                                     datetime.datetime.today():
-                                                if [tag[0][0].text, tag[0][3].text] not in ex_codes:
-                                                    ex_codes.append([tag[0][0].text, tag[0][3].text])
+                                                if exhib == 'SCUKTEMPVISTA':
+                                                    if [tag[0][2].text, tag[0][3].text] not in ex_codes:
+                                                        ex_codes.append([tag[0][2].text, tag[0][3].text])
+                                                else:
+                                                    if [tag[0][0].text, tag[0][3].text] not in ex_codes:
+                                                        ex_codes.append([tag[0][0].text, tag[0][3].text])
                                         except (ValueError, TypeError):
                                             pass
 
@@ -249,7 +261,7 @@ class MovieguideAlerts:
 
     def send_message(self, exhib):
         _from = 'matt.parillo@webedia-group.com'
-        to = 'matt.parillo@boxoffice.com,edm@boxoffice.com,dion.white@boxoffice.com'
+        to = 'matt.parillo@boxoffice.com,dion.white@boxoffice.com,edm@boxoffice.com'
         msg = MIMEMultipart()
         msg['Subject'] = 'ACTION REQUIRED: Missing Movieguide Mappings'
         msg['From'] = _from

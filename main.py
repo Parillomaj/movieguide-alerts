@@ -23,6 +23,7 @@ import re
 class MovieguideAlerts:
     def __init__(self):
         self.unmatched = []
+        self.old_codes = []
         with open(f'{os.getcwd()}\\config.toml', 'r', encoding='utf-8') as toml_file:
             self.toml_dict = toml.loads(toml_file.read())
 
@@ -87,7 +88,6 @@ class MovieguideAlerts:
                                 for date in tag[0]:
                                     if 'OpeningDate' in date.tag:
                                         try:
-
                                             if datetime.datetime.strptime(date.text, '%Y-%m-%dT%H:%M:%S') > \
                                                     datetime.datetime.today():
                                                 if exhib == 'SCUKTEMPVISTA':
@@ -154,6 +154,41 @@ class MovieguideAlerts:
             for url in self.toml_dict[exhib]['urls']:
                 r = requests.get(url)
 
+        elif self.toml_dict[exhib]['method'] == 'mxc':
+            auth_url = 'https://auth.moviexchange.com/connect/token'
+            gather_base = self.toml_dict[exhib]['urls'][0]
+            gather_url = gather_base.split(',')[0]
+            gather_pass = gather_base.split(',')[1]
+            gather_user = gather_base.split(',')[2]
+            auth_data = {'password': gather_pass, 'username': gather_user, 'client_id': 'tbco_auth',
+                         'grant_type': 'password'}
+
+            r = requests.post(auth_url, data=auth_data)
+            bearer_token = r.json()['access_token']
+            headers = {'Authorization': f'Bearer {bearer_token}'}
+
+            r2 = requests.get(f'{gather_url}/Films?$format=json', headers=headers, timeout=None, verify=False)
+            r3 = requests.get(f'{gather_url}/ScheduledFilms?$format=json', headers=headers, timeout=None,
+                              verify=False)
+            d = r2.json()
+            d2 = r3.json()
+
+            for code in tqdm(d['value'], colour='blue', position=1):
+                try:
+                    date = datetime.datetime.strptime(code['OpeningDate'], '%Y-%m-%dT00:00:00')
+                    if date >= datetime.datetime.today():
+                        if [code["ID"], code["Title"]] not in ex_codes:
+                            ex_codes.append([code["ID"], code["Title"]])
+                except (ValueError, TypeError):
+                    continue
+
+            for code in tqdm(d2['value'], colour='green', position=1):
+                try:
+                    if [code["ID"], code["Title"]] not in ex_codes:
+                        ex_codes.append([code["ID"], code["Title"]])
+                except (ValueError, TypeError):
+                    continue
+
         elif self.toml_dict[exhib]['method'] == 'positive':
             for url in self.toml_dict[exhib]['urls']:
                 pos_basic = HTTPBasicAuth('BoxOffice', 'd9b2gCeP')
@@ -198,7 +233,7 @@ class MovieguideAlerts:
                         pass
                     else:
                         try:
-                            in_codes.append([code[2], code[3]])
+                            in_codes.append([code[2], code[3], code[8]])
                         except IndexError:
                             pass
                 except (TypeError, IndexError):

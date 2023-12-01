@@ -155,7 +155,10 @@ class MovieguideAlerts:
                 r = requests.get(url)
 
         elif self.toml_dict[exhib]['method'] == 'mxc':
-            auth_url = 'https://auth.moviexchange.com/connect/token'
+            if "TEST" in exhib:
+                auth_url = 'https://staging-auth.moviexchange.com/connect/token'
+            else:
+                auth_url = 'https://auth.moviexchange.com/connect/token'
             gather_base = self.toml_dict[exhib]['urls'][0]
             gather_url = gather_base.split(',')[0]
             gather_pass = gather_base.split(',')[1]
@@ -164,12 +167,15 @@ class MovieguideAlerts:
                          'grant_type': 'password'}
 
             r = requests.post(auth_url, data=auth_data)
-            bearer_token = r.json()['access_token']
-            headers = {'Authorization': f'Bearer {bearer_token}'}
+            bearer_token = (r.json()['access_token'])
+            headers = {'Authorization': f'Bearer {bearer_token}',
+                       'Accept': '*/*',
+                       'Accept-Encoding': 'gzip,deflate,br',
+                       'Connection': 'keep-alive',
+                       'Content-type': 'application/json'}
 
-            r2 = requests.get(f'{gather_url}/Films?$format=json', headers=headers, timeout=None, verify=False)
-            r3 = requests.get(f'{gather_url}/ScheduledFilms?$format=json', headers=headers, timeout=None,
-                              verify=False)
+            r2 = requests.get(f'{gather_url}/Films?$format=json', headers=headers)
+            r3 = requests.get(f'{gather_url}/ScheduledFilms?$format=json', headers=headers)
             d = r2.json()
             d2 = r3.json()
 
@@ -184,7 +190,7 @@ class MovieguideAlerts:
 
             for code in tqdm(d2['value'], colour='green', position=1):
                 try:
-                    if [code["ID"], code["Title"]] not in ex_codes:
+                    if [code["ScheduledFilmId"], code["Title"]] not in ex_codes:
                         ex_codes.append([code["ID"], code["Title"]])
                 except (ValueError, TypeError):
                     continue
@@ -227,9 +233,9 @@ class MovieguideAlerts:
                     """ % exhib
             for code in self.cursor.execute(query).fetchall():
                 try:
-                    if code[3] is None or code[3] is '':
+                    if code[3] is None or code[3] == '':
                         in_codes.append([code[2], 'None'])
-                    elif code[2] is None or code[2] is '':
+                    elif code[2] is None or code[2] == '':
                         pass
                     else:
                         try:

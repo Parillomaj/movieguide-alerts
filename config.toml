@@ -557,3 +557,11 @@ chain_id = 1077
 filter_houses = ''
 search_on = 'chain'
 method = 'mxc'
+
+[EVERYMANTEST]
+urls = ['https://digital-api.sandbox.everymancinema.com/odata.svc,vnYQW9b4wFdNKiu,webhost-everyman-theboxofficecompany']
+prefix = 'EVERYMAN'
+chain_id = 1077
+filter_houses = ''
+search_on = 'chain'
+method = 'mxc'

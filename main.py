@@ -28,7 +28,7 @@ class MovieguideAlerts:
             self.toml_dict = toml.loads(toml_file.read())
 
         connection = pyodbc.connect("Driver={SQL Server};"
-                                    "Server=kraken.csource1.net;"
+                                    "Server=CinemaDB.csource1.net;"
                                     "Database=master;"
                                     "Trusted_connection=no;"
                                     "UID=readonly;"
@@ -302,7 +302,7 @@ class MovieguideAlerts:
 
     def send_message(self, exhib):
         _from = 'matt.parillo@webedia-group.com'
-        to = 'matt.parillo@boxoffice.com,dion.white@boxoffice.com,edm@boxoffice.com'
+        to = 'matt.parillo@boxoffice.com,dion.white@boxoffice.com,edm@boxoffice.com,lisa.lawlor@boxoffice.com'
         msg = MIMEMultipart()
         msg['Subject'] = 'ACTION REQUIRED: Missing Movieguide Mappings'
         msg['From'] = _from

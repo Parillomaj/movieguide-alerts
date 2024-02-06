@@ -315,7 +315,7 @@ method = 'positive'
 
 [PARAMOUNTRTS]
 urls = ['http://21863.formovietickets.com:2235/showtimes.xml']
-prefix = 'GENRTS'
+prefix = 'PARAMOUNTRTS'
 chain_id = 207
 filter_houses = ''
 search_on = 'chain'
@@ -543,7 +543,7 @@ search_on = 'chain'
 method = 'vista'
 
 [SCUKTEMPVISTA]
-urls = ['https://webconnect.uatwmpnatl.co.uk/WSVistaWebClient/OData.svc,IBAHkRr30SQXhUgqXHyPZcMGQaF55mur']
+urls = ['https://webconnect.showcasecinemas.co.uk/WSVistaWebClient/OData.svc,a719be59f38b4adeb7113d225e5b08d2']
 prefix = 'SHOWCASE'
 chain_id = 577
 filter_houses = ''
@@ -565,3 +565,37 @@ chain_id = 1077
 filter_houses = ''
 search_on = 'chain'
 method = 'mxc'
+
+[STATERTS]
+urls = ['https://61565.formovietickets.com:2235/showtimes.xml', 'https://162.formovietickets.com:2235/showtimes.xml',
+        'https://24552.formovietickets.com:2235/showtimes.xml', 'https://80756.formovietickets.com:2235/showtimes.xml',
+        'https://8342.formovietickets.com:2235/showtimes.xml', 'https://33.formovietickets.com:2235/showtimes.xml']
+prefix = 'FRMRTS,GENRTS'
+chain_id = 144
+filter_houses = ''
+search_on = 'chain'
+method = 'rts'
+
+[CINELOUNGERTS]
+urls = ['https://746166.formovietickets.com:2235/showtimes.xml']
+prefix = 'CINELOUNGERTS'
+chain_id = 1325
+filter_houses = ''
+search_on = 'chain'
+method = 'rts'
+
+[PORTAGERTS]
+urls = ['https://33810.formovietickets.com:2235/showtimes.xml']
+prefix = 'PORTAGERTS'
+chain_id = 2090
+filter_houses = ''
+search_on = 'chain'
+method = 'rts'
+
+[EDMONDRTS]
+urls = ['https://664115.formovietickets.com:2235/showtimes.xml']
+prefix = 'EDMONDRTS'
+chain_id = 2598
+filter_houses = ''
+search_on = 'chain'
+method = 'rts'

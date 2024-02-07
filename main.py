@@ -17,6 +17,7 @@ import datetime
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
+
 import re
 
 
@@ -152,7 +153,19 @@ class MovieguideAlerts:
 
         elif self.toml_dict[exhib]['method'] == 'veezi':
             for url in self.toml_dict[exhib]['urls']:
-                r = requests.get(url)
+                payload = {'VeeziAccessToken': url}
+                rs = requests.get('https://api.us.veezi.com/v1/session', headers=payload)
+                rf = requests.get('https://api.us.veezi.com/v1/film', headers=payload)
+
+                sessions = rs.json()
+                films = rf.json()
+
+                for film in tqdm(sessions, colour='blue'):
+                    if [film['FilmId'], film['Title']] not in ex_codes:
+                        ex_codes.append([film['FilmId'], film['Title']])
+                for film in tqdm(films, colour='blue'):
+                    if [film['Id'], film['Title']] not in ex_codes:
+                        ex_codes.append([film['FilmId'], film['Title']])
 
         elif self.toml_dict[exhib]['method'] == 'mxc':
             if "TEST" in exhib:

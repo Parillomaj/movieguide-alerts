@@ -174,8 +174,15 @@ class MovieguideAlerts:
                        'Connection': 'keep-alive',
                        'Content-type': 'application/json'}
 
-            r2 = requests.get(f'{gather_url}/Films?$format=json', headers=headers)
-            r3 = requests.get(f'{gather_url}/ScheduledFilms?$format=json', headers=headers)
+            r2 = requests.get(f'{gather_url}/Films?$format=json', headers=headers,
+                              proxies={"http": "http://d313545ab72242978fd84f936bba4d5e:@proxy.crawlera.com:8011/",
+                                       "https": "http://d313545ab72242978fd84f936bba4d5e:@proxy.crawlera.com:8011/"},
+                              verify=False)
+            r3 = requests.get(f'{gather_url}/ScheduledFilms?$format=json', headers=headers,
+                              proxies={"http": "http://d313545ab72242978fd84f936bba4d5e:@proxy.crawlera.com:8011/",
+                                       "https": "http://d313545ab72242978fd84f936bba4d5e:@proxy.crawlera.com:8011/"},
+                              verify=False
+                              )
             d = r2.json()
             d2 = r3.json()
 
@@ -191,7 +198,7 @@ class MovieguideAlerts:
             for code in tqdm(d2['value'], colour='green', position=1):
                 try:
                     if [code["ScheduledFilmId"], code["Title"]] not in ex_codes:
-                        ex_codes.append([code["ID"], code["Title"]])
+                        ex_codes.append([code["ScheduledFilmId"], code["Title"]])
                 except (ValueError, TypeError):
                     continue
 

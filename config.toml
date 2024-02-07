@@ -338,12 +338,12 @@ search_on = 'fandango'
 method = 'fandango'
 
 [EVERYMANVISTA]
-urls = ['https://reservations.everymancinema.com/WSVistaWebClient/odata.svc,29127l315u83340fev033Us477Cnr2nq0D624qJR5269Q44C0nn1778TA87v']
+urls = ['https://digital-api.everymancinema.com/odata.svc,QaGZqrJp9P9nmbE,webhost-everyman-theboxofficecompany']
 prefix = 'EVERYMAN'
 chain_id = 1077
 filter_houses = ''
 search_on = 'chain'
-method = 'vista'
+method = 'mxc'
 
 [CELEBRITYRTS]
 urls = ['https://33015.formovietickets.com:2235/showtimes.xml', 'http://22792.formovietickets.com:2235/showtimes.xml',
@@ -550,13 +550,13 @@ filter_houses = ''
 search_on = 'chain'
 method = 'vista'
 
-[EVERYMANMXCVISTA]
-urls = ['https://digital-api.everymancinema.com/odata.svc,QaGZqrJp9P9nmbE,webhost-everyman-theboxofficecompany']
+[EVERYMANVISTABACK]
+urls = ['https://reservations.everymancinema.com/WSVistaWebClient/odata.svc,29127l315u83340fev033Us477Cnr2nq0D624qJR5269Q44C0nn1778TA87v']
 prefix = 'EVERYMAN'
 chain_id = 1077
 filter_houses = ''
 search_on = 'chain'
-method = 'mxc'
+method = 'vista'
 
 [EVERYMANTEST]
 urls = ['https://digital-api.sandbox.everymancinema.com/odata.svc,vnYQW9b4wFdNKiu,webhost-everyman-theboxofficecompany']

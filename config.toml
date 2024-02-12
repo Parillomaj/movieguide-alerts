@@ -599,3 +599,79 @@ chain_id = 2598
 filter_houses = ''
 search_on = 'chain'
 method = 'rts'
+
+[FMGVEEZI]
+urls = ['zfr4cxnezdhbfzw17362hwagp0','6vfvyr03f2mtw3t3bmp64qg1v0']
+prefix = 'VEEZI'
+chain_id = 926
+filter_houses = ''
+search_on = 'chain'
+method = 'veezi'
+
+[MITCHELLVEEZI]
+urls = ['h1bqwb5sjfmhe2422kf450kb9g','hwkjn5a374yvgc40yssttwwbv8','8n1f03t24gg242atrh2w0h5cy8',
+        'fweym5ayymhbhs53xqhy3mevtg','2fc5c7f4hrd5mw5np6wwmyrwyg','esh6nra20321gdpwqj9kxqn8jw',
+        'aszshk0ny95j83b56tx03ytkfm','jkg15szc9h27kk3smvvyyebgfw','epdj09rtd5d16at7d4d6594wp0',
+        'e9n240j86y724a09qg382zgdkr','y9dacf7351j094sf3aa0njy0nr','9ewz21r491hdxecwx3yzr6c5hm',
+        'ec32efa3sbt72ff3mxkx9yw8fr','j95fnayqde5ar8h0025vdwjd24']
+prefix = 'VEEZI'
+chain_id = 1220
+filter_houses = ''
+search_on = 'chain'
+method = 'veezi'
+
+[CINELOUNGEVEEZI]
+urls = ['jxk5gn0xbgwp0tex4z411q680r','7q968ngj60ms8qnmcb400zjsfc']
+prefix = 'VEEZI'
+chain_id = 1325
+filter_houses = ''
+search_on = 'chain'
+method = 'veezi'
+
+[GRANDAVVEEZI]
+urls = ['dmgthqgwx5mbx1bygss2gx1578']
+prefix = 'VEEZI'
+chain_id = 1382
+filter_houses = ''
+search_on = 'chain'
+method = 'veezi'
+
+[PRIMETIMERTS]
+urls = ['https://297309.formovietickets.com:2235/showtimes.xml']
+prefix = 'PRIMETIMERTS'
+chain_id = 2440
+filter_houses = ''
+search_on = 'chain'
+method = 'rts'
+
+[TRICITYRTS]
+urls = ['http://24919.formovietickets.com:2235/showtimes.xml']
+prefix = 'TRICITYRTS'
+chain_id = 1016
+filter_houses = ''
+search_on = 'chain'
+method = 'rts'
+
+[SILVERSCREENRTS]
+urls = ['http://59953.formovietickets.com:2235/showtimes.xml']
+prefix = 'SILVERSCREENRTS'
+chain_id = 393
+filter_houses = ''
+search_on = 'chain'
+method = 'rts'
+
+[STREAMRTS]
+urls = ['http://677672.formovietickets.com:2235/showtimes.xml']
+prefix = 'STREAMRTS'
+chain_id = 2464
+filter_houses = ''
+search_on = 'chain'
+method = 'rts'
+
+[COLLINSROADRTS]
+urls = ['http://658159.formovietickets.com:2235/showtimes.xml']
+prefix = 'COLLINSROADRTS'
+chain_id = 989
+filter_houses = ''
+search_on = 'chain'
+method = 'rts'

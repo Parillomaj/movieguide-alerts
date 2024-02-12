@@ -163,9 +163,15 @@ class MovieguideAlerts:
                 for film in tqdm(sessions, colour='blue'):
                     if [film['FilmId'], film['Title']] not in ex_codes:
                         ex_codes.append([film['FilmId'], film['Title']])
+
                 for film in tqdm(films, colour='blue'):
-                    if [film['Id'], film['Title']] not in ex_codes:
-                        ex_codes.append([film['FilmId'], film['Title']])
+                    try:
+                        if (datetime.datetime.strptime(film['OpeningDate'], '%Y-%m-%dT%H:%M:%S') >=
+                                datetime.datetime.today()):
+                            if [film['Id'], film['Title']] not in ex_codes:
+                                ex_codes.append([film['Id'], film['Title']])
+                    except ValueError:
+                        continue
 
         elif self.toml_dict[exhib]['method'] == 'mxc':
             if "TEST" in exhib:

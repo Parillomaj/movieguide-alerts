@@ -675,3 +675,11 @@ chain_id = 989
 filter_houses = ''
 search_on = 'chain'
 method = 'rts'
+
+[PRPOMNITERM]
+urls = ['20301,prospector,UHJvc3BlY3RvcjpPbW4hdDNybQ==']
+prefix = 'PRP'
+chain_id = 1439
+filter_houses = ''
+search_on = 'chain'
+method = 'omniterm'

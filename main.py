@@ -148,8 +148,14 @@ class MovieguideAlerts:
                             continue
 
         elif self.toml_dict[exhib]['method'] == 'omniterm':
+            base_url = "https://wsomniwebticketing.net/api/"
             for url in self.toml_dict[exhib]['urls']:
-                r = requests.get(url)
+                payload = {'Authorization': f'Basic {url.split(",")[2]}'}
+                r = requests.get(f'{base_url}/{url.split(",")[1]}/{url.split(",")[0]}/showtimes', headers=payload)
+
+                for film in tqdm(r.json()['movies'], colour='blue'):
+                    if [film['movieId'], film['title']] not in ex_codes:
+                        ex_codes.append([film['movieId'], film['title']])
 
         elif self.toml_dict[exhib]['method'] == 'veezi':
             for url in self.toml_dict[exhib]['urls']:

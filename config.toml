@@ -683,3 +683,12 @@ chain_id = 1439
 filter_houses = ''
 search_on = 'chain'
 method = 'omniterm'
+
+[CLVOMNITERM]
+urls = ['44005,CC4400,Q0w0NDAwOk9tbiF0M3Jt','44001,CC4400,Q0w0NDAwOk9tbiF0M3Jt',
+        '44007,CC4400,Q0w0NDAwOk9tbiF0M3Jt','44008,CC4400,Q0w0NDAwOk9tbiF0M3Jt']
+prefix = 'CLV'
+chain_id = 173
+filter_houses = ''
+search_on = 'chain'
+method = 'omniterm'

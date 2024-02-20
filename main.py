@@ -258,17 +258,16 @@ class MovieguideAlerts:
                     exit(1)
 
         elif self.toml_dict[exhib]['method'] == 'amc':
+            files = []
             try:
-                for file in os.listdir('\\bbc1.csource1.net\\amc\\releases'):
+                for file in os.listdir('Z:\\releases'):
+                    files.append(file)
+                for file in sorted(files, reverse=True):
                     if datetime.datetime.strftime(datetime.datetime.today(), '%Y-%m-%d') in file:
-                        shutil.copy(f'\\bbc1.csource1.net\\amc\\releases\\{file}',
-                                    f'S\\Mtxcrawler\\Gathertimes\\mtxamc\\{file}')
+                        shutil.copy(f'Z:\\releases\\{file}',
+                                    f'S:\\Mtxcrawler\\Gathertimes\\mtxamc\\{file}')
                     else:
-                        for i in range(3):
-                            sys.stdout.write(f'\rNo file found{"." * i}')
-                            sys.stdout.flush()
-                            time.sleep(1)
-                            exit(1)
+                        continue
             except FileNotFoundError:
                 for i in range(3):
                     sys.stdout.write(f'\rNo file found{"."*i}')
@@ -282,8 +281,8 @@ class MovieguideAlerts:
                     if '.dat' in each.lower():
                         files.append(each)
 
-                with (open(f'S:\\Mtxcrawler\\Gathertimes\\MTXAMC\\{sorted(files)[0]}', 'r', encoding='utf-8')
-                      as data_file):
+                with open(f'S:\\Mtxcrawler\\Gathertimes\\MTXAMC\\{sorted(files)[0]}',
+                          'r', encoding='utf-8') as data_file:
                     for line in tqdm(data_file, colour='blue'):
                         if [line.split('|')[2], line.split('|')[1]] not in ex_codes:
                             ex_codes.append([line.split('|')[2], line.split('|')[1]])
@@ -341,20 +340,20 @@ class MovieguideAlerts:
                     except (TypeError, IndexError):
                         pass
 
-                # compare to see if any codes are missing; if yes, send an email; if no, pass
-                try:
-                    ex_codes.sort(key=lambda x: x[0])
-                    in_codes.sort(key=lambda x: x[0])
-                except TypeError:
-                    pass
+            # compare to see if any codes are missing; if yes, send an email; if no, pass
+            try:
+                ex_codes.sort(key=lambda x: x[0])
+                in_codes.sort(key=lambda x: x[0])
+            except TypeError:
+                pass
 
-                self.unmatched = [x for x in ex_codes if all(y[0] not in x for y in in_codes)]
-                with open(f'{os.getcwd()}\\Files\\{exhib}-Movies.txt', 'w+', encoding='utf-8') as out_file:
-                    for _code in self.unmatched:
-                        try:
-                            out_file.write(f'{_code[0]}\t{_code[1]}\n')
-                        except (IndexError, TypeError):
-                            pass
+            self.unmatched = [x for x in ex_codes if all(y[0] not in x for y in in_codes)]
+            with open(f'{os.getcwd()}\\Files\\{exhib}-Movies.txt', 'w+', encoding='utf-8') as out_file:
+                for _code in self.unmatched:
+                    try:
+                        out_file.write(f'{_code[0]}\t{_code[1]}\n')
+                    except (IndexError, TypeError):
+                        pass
 
     def stats(self, exhib):
         today = datetime.datetime.today().strftime('%Y%m%d-%H:%M')

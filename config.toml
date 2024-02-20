@@ -692,3 +692,11 @@ chain_id = 173
 filter_houses = ''
 search_on = 'chain'
 method = 'omniterm'
+
+[MTXAMC]
+urls = []
+prefix = ''
+chain_id = 124
+filter_houses = ''
+search_on = 'chain'
+method = 'amc'

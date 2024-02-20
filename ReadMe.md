@@ -40,6 +40,8 @@ method is also a specific list of strings; the program will accept:
 - `rts` -- the query pattern will assume an rts endpoint
 - `omniterm` -- the query pattern will assume an omniterm endpoint
 - `veezi` -- the query pattern will assume a veezi endpoint
+- `fandango` -- special custom logic for Fandango codes handling
+- `amc` -- special custom logic for MTXAMC codes source
 
 ### Execution
 The program has a built-in multi-select CLI which allows the user to run

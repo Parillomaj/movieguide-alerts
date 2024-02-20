@@ -5,6 +5,7 @@ import inquirer
 import requests
 from requests.auth import HTTPBasicAuth
 import sys
+import shutil
 import time
 import xml
 import xml.etree.ElementTree as Et
@@ -17,7 +18,6 @@ import datetime
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
-
 import re
 
 
@@ -46,6 +46,7 @@ class MovieguideAlerts:
         in_codes = []
 
         # retrieve external codes
+        # Vista OData Logic
         if self.toml_dict[exhib]['method'] == 'vista':
             for url in self.toml_dict[exhib]['urls']:
                 try:
@@ -107,6 +108,7 @@ class MovieguideAlerts:
                         error_file.write(f'{datetime.datetime.now()}\t{exhib}\t{type(e).__name__}\n')
                         continue
 
+        # RTS Logic
         elif self.toml_dict[exhib]['method'] == 'rts':
             for url in self.toml_dict[exhib]['urls']:
                 run_bool = False
@@ -147,6 +149,7 @@ class MovieguideAlerts:
                             run_bool = True
                             continue
 
+        # Omniterm API Logic
         elif self.toml_dict[exhib]['method'] == 'omniterm':
             base_url = "https://wsomniwebticketing.net/api/"
             for url in self.toml_dict[exhib]['urls']:
@@ -157,6 +160,7 @@ class MovieguideAlerts:
                     if [film['movieId'], film['title']] not in ex_codes:
                         ex_codes.append([film['movieId'], film['title']])
 
+        # Vista Veezi Logic
         elif self.toml_dict[exhib]['method'] == 'veezi':
             for url in self.toml_dict[exhib]['urls']:
                 payload = {'VeeziAccessToken': url}
@@ -179,6 +183,7 @@ class MovieguideAlerts:
                     except ValueError:
                         continue
 
+        # Vista MoviesXchange Logic
         elif self.toml_dict[exhib]['method'] == 'mxc':
             if "TEST" in exhib:
                 auth_url = 'https://staging-auth.moviexchange.com/connect/token'
@@ -227,6 +232,7 @@ class MovieguideAlerts:
                 except (ValueError, TypeError):
                     continue
 
+        # POSitive Logic
         elif self.toml_dict[exhib]['method'] == 'positive':
             for url in self.toml_dict[exhib]['urls']:
                 pos_basic = HTTPBasicAuth('BoxOffice', 'd9b2gCeP')
@@ -234,7 +240,7 @@ class MovieguideAlerts:
                 for each in r.json():
                     if [each["id"], each["title"]] not in ex_codes:
                         ex_codes.append([each["id"], each["title"]])
-
+        # Fandango Logic
         elif self.toml_dict[exhib]['method'] == 'fandango':
             try:
                 with open('S:\\MtxCrawler\\GatherTimes\\Fandango\\FandangoCodesOut-Movies.txt', 'r', encoding='utf-8') \
@@ -251,6 +257,43 @@ class MovieguideAlerts:
                     time.sleep(1)
                     exit(1)
 
+        elif self.toml_dict[exhib]['method'] == 'amc':
+            try:
+                for file in os.listdir('\\bbc1.csource1.net\\amc\\releases'):
+                    if datetime.datetime.strftime(datetime.datetime.today(), '%Y-%m-%d') in file:
+                        shutil.copy(f'\\bbc1.csource1.net\\amc\\releases\\{file}',
+                                    f'S\\Mtxcrawler\\Gathertimes\\mtxamc\\{file}')
+                    else:
+                        for i in range(3):
+                            sys.stdout.write(f'\rNo file found{"." * i}')
+                            sys.stdout.flush()
+                            time.sleep(1)
+                            exit(1)
+            except FileNotFoundError:
+                for i in range(3):
+                    sys.stdout.write(f'\rNo file found{"."*i}')
+                    sys.stdout.flush()
+                    time.sleep(1)
+                    exit(1)
+
+            try:
+                files = []
+                for each in os.listdir('S:\\Mtxcrawler\\Gathertimes\\MTXAMC'):
+                    if '.dat' in each.lower():
+                        files.append(each)
+
+                with (open(f'S:\\Mtxcrawler\\Gathertimes\\MTXAMC\\{sorted(files)[0]}', 'r', encoding='utf-8')
+                      as data_file):
+                    for line in tqdm(data_file, colour='blue'):
+                        if [line.split('|')[2], line.split('|')[1]] not in ex_codes:
+                            ex_codes.append([line.split('|')[2], line.split('|')[1]])
+
+            except FileNotFoundError:
+                for i in range(3):
+                    sys.stdout.write(f'No file found{"."*i}')
+                    time.sleep(1)
+                    exit(1)
+
         else:
             sys.stdout.write('Not a valid method.')
             time.sleep(3)
@@ -259,50 +302,59 @@ class MovieguideAlerts:
         if len(ex_codes) == 0:
             pass
         else:
-            # retrieve internal codes
-            query = """select * from Cinema..codes
-                       where source = '%s'
-                    """ % exhib
-            for code in self.cursor.execute(query).fetchall():
-                try:
-                    if code[3] is None or code[3] == '':
-                        in_codes.append([code[2], 'None'])
-                    elif code[2] is None or code[2] == '':
-                        pass
-                    else:
-                        try:
-                            in_codes.append([code[2], code[3], code[8]])
-                        except IndexError:
-                            pass
-                except (TypeError, IndexError):
-                    pass
+            if self.toml_dict[exhib]['method'] == 'amc':
+                url = 'https://api.scoreboard.webedia.us/codes?function=search&source=MTXAMC'
+                r = requests.get(url)
 
-            ignore_query = """select code from Cinema..ignore 
-                              where source = '%s'
-                           """ % exhib
-            for code in self.cursor.execute(ignore_query).fetchall():
-                try:
-                    if code[0] == '0' or code[0] == 'test' or code[0] is None:
-                        pass
-                    else:
-                        in_codes.append([code[0], 'None'])
-                except (TypeError, IndexError):
-                    pass
+                for code in r.json()['rows']:
+                    if [code['code'], code['desc']] not in in_codes:
+                        in_codes.append([code['code'], code['desc']])
 
-            # compare to see if any codes are missing; if yes, send an email; if no, pass
-            try:
-                ex_codes.sort(key=lambda x: x[0])
-                in_codes.sort(key=lambda x: x[0])
-            except TypeError:
-                pass
-
-            self.unmatched = [x for x in ex_codes if all(y[0] not in x for y in in_codes)]
-            with open(f'{os.getcwd()}\\Files\\{exhib}-Movies.txt', 'w+', encoding='utf-8') as out_file:
-                for _code in self.unmatched:
+            else:
+                # retrieve internal codes
+                query = """select * from Cinema..codes
+                           where source = '%s'
+                        """ % exhib
+                for code in self.cursor.execute(query).fetchall():
                     try:
-                        out_file.write(f'{_code[0]}\t{_code[1]}\n')
-                    except (IndexError, TypeError):
+                        if code[3] is None or code[3] == '':
+                            in_codes.append([code[2], 'None'])
+                        elif code[2] is None or code[2] == '':
+                            pass
+                        else:
+                            try:
+                                in_codes.append([code[2], code[3], code[8]])
+                            except IndexError:
+                                pass
+                    except (TypeError, IndexError):
                         pass
+
+                ignore_query = """select code from Cinema..ignore 
+                                  where source = '%s'
+                               """ % exhib
+                for code in self.cursor.execute(ignore_query).fetchall():
+                    try:
+                        if code[0] == '0' or code[0] == 'test' or code[0] is None:
+                            pass
+                        else:
+                            in_codes.append([code[0], 'None'])
+                    except (TypeError, IndexError):
+                        pass
+
+                # compare to see if any codes are missing; if yes, send an email; if no, pass
+                try:
+                    ex_codes.sort(key=lambda x: x[0])
+                    in_codes.sort(key=lambda x: x[0])
+                except TypeError:
+                    pass
+
+                self.unmatched = [x for x in ex_codes if all(y[0] not in x for y in in_codes)]
+                with open(f'{os.getcwd()}\\Files\\{exhib}-Movies.txt', 'w+', encoding='utf-8') as out_file:
+                    for _code in self.unmatched:
+                        try:
+                            out_file.write(f'{_code[0]}\t{_code[1]}\n')
+                        except (IndexError, TypeError):
+                            pass
 
     def stats(self, exhib):
         today = datetime.datetime.today().strftime('%Y%m%d-%H:%M')
